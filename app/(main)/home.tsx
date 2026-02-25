@@ -8,7 +8,7 @@ import { UserContext } from "@/context/userContext";
 import { AntDesign } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useContext } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function HomeScreen() {
   const appContext = useContext(AppContext);
@@ -23,9 +23,9 @@ export default function HomeScreen() {
     <Container>
       <View style={homeScreenStyles.headerComponent}>
         <View style={{ gap: 5 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
             <AvatarComponent>
-              <AntDesign name="user-switch" size={25}/>
+              <AntDesign name="user-switch" size={25} />
             </AvatarComponent>
 
             <View>
@@ -45,7 +45,6 @@ export default function HomeScreen() {
                 }}
               />
             </View>
-
           </View>
           <AppText
             content="Acompanhe as suas avaliações"
@@ -69,6 +68,108 @@ export default function HomeScreen() {
           />
         </View>
       </View>
+
+      <View style={{ marginTop: 170, paddingInline: 30 }}>
+        <AppText content="Ações Rápidas" />
+
+        <View style={{ marginTop: 20 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              gap: 10,
+              alignItems: "center",
+            }}
+          >
+            <TouchableOpacity
+              style={homeScreenStyles.quickActionsTouchableOpacity}
+            >
+              <AntDesign
+                name="plus"
+                size={20}
+                style={homeScreenStyles.quickActionsIcon}
+              />
+              <AppText content="Nova Avaliação" />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={homeScreenStyles.quickActionsTouchableOpacity}
+            >
+              <AntDesign
+                name="user-add"
+                size={20}
+                style={homeScreenStyles.quickActionsIcon}
+              />
+              <AppText content="Nova Avaliação" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={{ marginTop: 20 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              gap: 10,
+              alignItems: "center",
+            }}
+          >
+            <TouchableOpacity
+              style={homeScreenStyles.quickActionsTouchableOpacity}
+            >
+              <AntDesign
+                name="usergroup-add"
+                size={20}
+                style={homeScreenStyles.quickActionsIcon}
+              />
+              <AppText content="Ver Pacientes" />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={homeScreenStyles.quickActionsTouchableOpacity}
+            >
+              <AntDesign
+                name="history"
+                size={20}
+                style={homeScreenStyles.quickActionsIcon}
+              />
+              <AppText content="Minhas Avaliações" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <AppText
+          content="Pode te interessar"
+          textProps={{ style: { marginBlock: 20 } }}
+        />
+
+        <View
+          style={{
+            backgroundColor: colors.opaqueBlue,
+            borderRadius: 10,
+            padding: 20,
+          }}
+        >
+          <View style={{ flexDirection: 'row' }}>
+            <AppText
+              content="Osteonecrose dos maxilares relacionada a medicamentos (ONM-RM)"
+              size={textSize.regular}
+              textProps={{
+                style: { fontWeight: "bold" },
+              }}
+            />
+            <AntDesign name="star" size={20} color={colors.opaqueYellow} style={{ marginLeft: -10 }} />
+          </View>
+
+          <AppText
+            content="A ONM-RM é caracterizada pela exposição óssea persistente por mais de 8 semanas em pessoas em uso de drogas antirreabsortivas e/ou drogas antiangiogênicas, sem história de radioterapia na região (Ruggiero et al., 2022; Yarom et al., 2019)."
+            size={textSize.regular}
+            textProps={{
+              style: { marginTop: 20 },
+            }}
+          />
+        </View>
+      </View>
     </Container>
   );
 }
@@ -83,5 +184,19 @@ const homeScreenStyles = StyleSheet.create({
     borderBottomLeftRadius: 30,
     position: "absolute",
     width: "100%",
+  },
+  quickActionsTouchableOpacity: {
+    backgroundColor: colors.transparentWhite,
+    padding: 20,
+    borderRadius: 10,
+    gap: 20,
+    width: 150,
+    height: 150,
+  },
+  quickActionsIcon: {
+    backgroundColor: colors.opaqueBlue,
+    padding: 13,
+    borderRadius: 10,
+    alignSelf: "flex-start",
   },
 });

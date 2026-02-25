@@ -16,6 +16,9 @@ export default function LoginScreen() {
   const onHandleGoToForgotPasswordScreen = () => {
     router.push('/(auth)/forgotPasswordEmailInput');
   }
+  const onHandleGoToMainHomeScreen = () => {
+    router.push('/(main)/home');
+  }
 
   return (
     <Container>
@@ -81,6 +84,7 @@ export default function LoginScreen() {
               borderColor: colors.mainWhite,
               marginTop: 15,
             }}
+            onPress={onHandleGoToMainHomeScreen}
           >
             <AppText
               textProps={{

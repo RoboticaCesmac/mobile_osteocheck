@@ -1,5 +1,6 @@
 export default {
   mainWhite: '#FFFFFF',
+  transparentWhite: '#F6F1F1',
   darkBlue: '#0F365A',
   successBlue: '#19A7CE',
   opaqueBlue: '#AFD3E2',
