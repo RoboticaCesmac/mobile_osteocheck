@@ -7,8 +7,22 @@ export default function MainLayout() {
       <Tabs.Screen
         name="home"
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: 'Início',
           tabBarIcon: ({ color }) => <AntDesign name="home" size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="history"
+        options={{
+          tabBarLabel: 'Histórico',
+          tabBarIcon: ({ color }) => <AntDesign name="clock-circle" size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="patients"
+        options={{
+          tabBarLabel: 'Pacientes',
+          tabBarIcon: ({ color }) => <AntDesign name="team" size={24} color={color} />,
         }}
       />
       <Tabs.Screen

@@ -69,7 +69,7 @@ export default function AnimatedNotification({
     return {
       [NotificationType.Success]: Colors.mainGreen,
       [NotificationType.Error]: Colors.errorRed,
-      [NotificationType.Warning]: Colors.mainYellow,
+      [NotificationType.Warning]: Colors.opaqueYellow,
     }[notificationType];
   };
 

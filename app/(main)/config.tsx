@@ -5,12 +5,22 @@ import textSize from "@/constants/textSize";
 import { AppContext, ScreenName } from "@/context/appContext";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import ButtonComponent from "@/components/button.component";
+import ConfirmModalComponent from "@/components/confirmModal.component";
 
 export default function ConfigScreen() {
     const appContext = useContext(AppContext);
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
+    const onHandleLogOut = () => {
+        appContext.handleLogout();
+    }
+
+    const onHandleClickLogOut = () => {
+        setIsLogoutModalOpen(true);
+    }
 
     useFocusEffect(
         useCallback(() => {
@@ -84,6 +94,7 @@ export default function ConfigScreen() {
                 <View style={styles.footer}>
                     <ButtonComponent
                         style={styles.logoutButton}
+                        onPress={onHandleClickLogOut}
                     >
                         <AppText
                             content="Sair"
@@ -91,6 +102,16 @@ export default function ConfigScreen() {
                         />
                     </ButtonComponent>
                 </View>
+
+                <ConfirmModalComponent
+                    visible={isLogoutModalOpen}
+                    title="Sair da Conta"
+                    description="Tem certeza que deseja encerrar sua sessão?"
+                    cancelLabel="Cancelar"
+                    confirmLabel="Sair"
+                    onCancel={() => setIsLogoutModalOpen(false)}
+                    onConfirm={onHandleLogOut}
+                />
             </View>
         </Container>
     );

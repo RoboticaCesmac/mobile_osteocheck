@@ -29,23 +29,23 @@ export default function InputComponent(props: InputComponentProps) {
           style={[
             textInputStyles.styles,
             props.isLoading ? { paddingVertical: 3 } : {},
-            suffix ? { paddingRight: 50,  } : { },
+            suffix ? { paddingRight: 50, } : {},
           ]}
           {...restProps}
           value={props.isLoading ? "" : props.value}
-          placeholder={props.isLoading ? "" : props.placeholder }
+          placeholder={props.isLoading ? "" : props.placeholder}
         />
         {suffix && (
           <View style={textInputStyles.suffixWrapper}>
             <View style={textInputStyles.suffixContent}>
-              <AppText 
+              <AppText
                 content={suffix}
-                textProps={{ 
-                  style: { 
-                    fontSize: 12, 
-                    color: Colors.mainWhite 
-                  } 
-                }} 
+                textProps={{
+                  style: {
+                    fontSize: 12,
+                    color: Colors.mainWhite
+                  }
+                }}
               />
             </View>
           </View>
@@ -108,8 +108,7 @@ const textInputStyles = StyleSheet.create({
   },
   errorText: {
     color: Colors.errorRed,
-    fontSize: TextSize.verySmall,
-    marginTop: -6,
+    fontSize: TextSize.small,
     marginLeft: 5,
   },
   inputLoading: {

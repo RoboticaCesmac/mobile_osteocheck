@@ -10,6 +10,7 @@ import textSize from "@/constants/textSize";
 import osteocheckBlueBgLogo from "@/assets/images/osteocheck-blue-bg-logo.png";
 import { useRouter } from "expo-router";
 import UserContextProvider from "./userContext";
+import { clearAllStoredData } from "@/utils/asyncStorage";
 
 type AppNotification = {
   type: NotificationType;
@@ -30,11 +31,13 @@ interface IAppContext {
     message: string,
   ) => void;
   handleShowHeaderComponent: (show: boolean, screenName?: ScreenName) => void;
+  handleLogout: () => void;
 }
 
 const defaultAppContext: IAppContext = {
   handleSetNotification: () => null,
   handleShowHeaderComponent: () => null,
+  handleLogout: () => null,
 };
 
 export const AppContext = createContext(defaultAppContext);
@@ -70,9 +73,17 @@ export default function AppContextProvider({ children }: PropsWithChildren) {
     }
   };
 
+  const handleLogout = () => {
+    clearAllStoredData();
+    setScreenName(undefined);
+    setShowHeader(false);
+    router.replace("/(auth)/home");
+  }
+
   const context: IAppContext = {
     handleSetNotification,
     handleShowHeaderComponent,
+    handleLogout,
   };
 
   return (

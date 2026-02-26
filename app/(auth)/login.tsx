@@ -8,16 +8,57 @@ import InputComponent from "@/components/input.component";
 import AppText from "@/components/appText.component";
 import ButtonComponent from "@/components/button.component";
 import { AntDesign } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
+import AuthAPI from "@/services/auth";
+import { useCallback, useContext, useState } from "react";
+import { storeData } from "@/utils/asyncStorage";
+import { AppContext } from "@/context/appContext";
+import { NotificationType } from "@/components/notification.component";
 
 export default function LoginScreen() {
+  const [email, setEmail] = useState<string>();
+  const [password, setPassword] = useState<string>();
+  const [emailError, setEmailError] = useState<string[]>();
+  const [passwordError, setPasswordError] = useState<string[]>();
+
+  const appContext = useContext(AppContext);
   const router = useRouter();
+
+  useFocusEffect(useCallback(() => {
+    verifyProfile();
+  }, []));
 
   const onHandleGoToForgotPasswordScreen = () => {
     router.push('/(auth)/forgotPasswordEmailInput');
   }
+
   const onHandleGoToMainHomeScreen = () => {
-    router.push('/(main)/home');
+    router.replace('/(main)/home');
+  }
+
+  async function verifyProfile() {
+    try {
+      const a = await AuthAPI.profile();
+      onHandleGoToMainHomeScreen();
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+
+  const onHandleLogin = async () => {
+    try {
+      const auth = await AuthAPI.login({
+        email: email!,
+        password: password!,
+      });
+      storeData("userJWT", auth.data.jwt);
+      appContext.handleSetNotification(NotificationType.Success, "Login realizado com sucesso");
+      onHandleGoToMainHomeScreen();
+    } catch (error: any) {
+      console.log(error);
+      setEmailError(error?.response?.data?.errors?.email);
+      setPasswordError(error?.response?.data?.errors?.password);
+    }
   }
 
   return (
@@ -54,6 +95,9 @@ export default function LoginScreen() {
             <InputComponent
               style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="exemplo@hotmail.com"
+              value={email}
+              onChangeText={setEmail}
+              errorText={emailError}
             />
           </View>
           <View>
@@ -66,10 +110,13 @@ export default function LoginScreen() {
             <InputComponent
               style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Senha"
+              value={password}
+              onChangeText={setPassword}
+              errorText={passwordError}
             />
           </View>
 
-          <TouchableOpacity onPress={onHandleGoToForgotPasswordScreen}  style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+          <TouchableOpacity onPress={onHandleGoToForgotPasswordScreen} style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
             <AntDesign name="exclamation-circle" color={colors.opaqueYellow} />
             <AppText
               content="Esqueci minha senha"
@@ -84,7 +131,7 @@ export default function LoginScreen() {
               borderColor: colors.mainWhite,
               marginTop: 15,
             }}
-            onPress={onHandleGoToMainHomeScreen}
+            onPress={onHandleLogin}
           >
             <AppText
               textProps={{

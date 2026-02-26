@@ -8,5 +8,6 @@ export default {
   mainGray: '#6b6b6b',
   opaqueYellow: '#FFDF00',
   darkerGray: '#3636363a',
-  errorRed: '#ce1313'
+  errorRed: '#ce1313',
+  mainGreen: '#19ce73ff',
 }
