@@ -1,24 +1,45 @@
 import AppText from "@/components/appText.component";
 import AvatarComponent from "@/components/avatar.component";
+import ConfirmModalComponent from "@/components/confirmModal.component";
 import Container from "@/components/container.component";
 import colors from "@/constants/colors";
 import textSize from "@/constants/textSize";
 import { AppContext, ScreenName } from "@/context/appContext";
 import { UserContext } from "@/context/userContext";
 import { AntDesign } from "@expo/vector-icons";
-import { useFocusEffect } from "expo-router";
-import { useCallback, useContext } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useContext, useState } from "react";
+import { BackHandler, StyleSheet, TouchableOpacity, View } from "react-native";
 
 export default function HomeScreen() {
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
   const appContext = useContext(AppContext);
   const userContext = useContext(UserContext);
 
   useFocusEffect(
     useCallback(() => {
       appContext.handleShowHeaderComponent(true, ScreenName.Home);
+
+      const onBackPress = () => {
+        setIsLogoutModalOpen(true);
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => subscription.remove();
     }, []),
   );
+
+  const onHandleLogOut = () => {
+    appContext.handleLogout();
+  }
+
+  const onHandleGoToPatientsScreen = () => {
+    router.push("/(main)/patients");
+  }
+
   return (
     <Container>
       <View style={homeScreenStyles.headerComponent}>
@@ -115,6 +136,7 @@ export default function HomeScreen() {
             }}
           >
             <TouchableOpacity
+              onPress={onHandleGoToPatientsScreen}
               style={homeScreenStyles.quickActionsTouchableOpacity}
             >
               <AntDesign
@@ -170,6 +192,16 @@ export default function HomeScreen() {
           />
         </View>
       </View>
+
+      <ConfirmModalComponent
+        visible={isLogoutModalOpen}
+        title="Sair da Conta"
+        description="Tem certeza que deseja encerrar sua sessão?"
+        cancelLabel="Cancelar"
+        confirmLabel="Sair"
+        onCancel={() => setIsLogoutModalOpen(false)}
+        onConfirm={onHandleLogOut}
+      />
     </Container>
   );
 }

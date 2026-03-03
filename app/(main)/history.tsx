@@ -171,6 +171,7 @@ export default function HistoricoScreen() {
                     )}
                     contentContainerStyle={styles.listContent}
                     showsVerticalScrollIndicator={false}
+                    scrollEnabled={false}
                     ListEmptyComponent={
                         <View style={styles.emptyContainer}>
                             <Feather name="users" size={40} color={colors.opaqueBlue} />
