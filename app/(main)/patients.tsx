@@ -7,9 +7,12 @@ import textSize from "@/constants/textSize";
 import { AppContext, ScreenName } from "@/context/appContext";
 import { Patient } from "@/domain/patient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useFocusEffect } from "expo-router";
-import { useCallback, useContext, useMemo, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import ProfessionalAPI from "@/services/professional";
+import { NotificationType } from "@/components/notification.component";
+import FullScreenLoading from "@/components/fullScreenLoading.component";
 
 const MOCK_PATIENTS: Patient[] = [
     {
@@ -69,12 +72,13 @@ interface PatientCardProps {
     index: number;
 }
 
-function PatientCard({ patient, index }: PatientCardProps) {
+function PatientCard({ patient }: PatientCardProps) {
+    const router = useRouter();
     const initials = getInitials(patient.name);
     const avatarColor = AVATAR_COLORS[initials] ?? colors.successBlue;
 
     return (
-        <TouchableOpacity style={styles.card} activeOpacity={0.75}>
+        <TouchableOpacity style={styles.card} activeOpacity={0.75} onPress={() => router.push({ pathname: "/patient/[id]", params: { id: patient.id } } as any)}>
             <AvatarComponent backgroundColor={avatarColor} padding={14}>
                 <AppText
                     content={initials}
@@ -94,7 +98,7 @@ function PatientCard({ patient, index }: PatientCardProps) {
                     textProps={{ style: styles.cardName }}
                 />
                 <AppText
-                    content={`Avaliação #  ${5821 - index}`}
+                    content={`ID #${patient.id}`}
                     textProps={{ style: styles.cardSubtitle }}
                 />
                 <View style={styles.cardDateRow}>
@@ -113,29 +117,50 @@ function PatientCard({ patient, index }: PatientCardProps) {
     );
 }
 
-export default function PacientesScreen() {
-    const appContext = useContext(AppContext);
+export default function PatientsScreen() {
     const [search, setSearch] = useState("");
+    const [patients, setPatients] = useState<Patient[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const appContext = useContext(AppContext);
 
     useFocusEffect(
         useCallback(() => {
             appContext.handleShowHeaderComponent(true, ScreenName.Patients);
+            getProfessionalPatients();
         }, []),
     );
 
-    const filteredPatients = useMemo(() => {
-        if (!search.trim()) return MOCK_PATIENTS;
-        return MOCK_PATIENTS.filter((p) =>
-            p.name.toLowerCase().includes(search.toLowerCase()),
+    const getProfessionalPatients = async () => {
+        try {
+            setLoading(true);
+            const response = await ProfessionalAPI.getProfessionalPatients();
+            if (response) {
+                setPatients(response.data.patients);
+            }
+        } catch (error: any) {
+            console.log(error);
+            appContext.handleSetNotification(NotificationType.Error, error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <Container>
+                <FullScreenLoading />
+            </Container>
         );
-    }, [search]);
+    }
 
     return (
         <Container>
             <View style={styles.content}>
                 <SearchInputComponent value={search} onChangeText={setSearch} />
                 <FlatList
-                    data={filteredPatients}
+                    scrollEnabled={false}
+                    data={patients}
                     keyExtractor={(item) => String(item.id)}
                     renderItem={({ item, index }) => (
                         <PatientCard patient={item} index={index} />

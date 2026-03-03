@@ -70,6 +70,9 @@ export default function AppContextProvider({ children }: PropsWithChildren) {
     if (show) {
       setShowHeader(true);
       setScreenName(screenName);
+    } else {
+      setShowHeader(false);
+      setScreenName(undefined);
     }
   };
 

@@ -20,6 +20,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState<string>();
   const [emailError, setEmailError] = useState<string[]>();
   const [passwordError, setPasswordError] = useState<string[]>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const appContext = useContext(AppContext);
   const router = useRouter();
@@ -47,6 +48,7 @@ export default function LoginScreen() {
 
   const onHandleLogin = async () => {
     try {
+      setLoading(true);
       const auth = await AuthAPI.login({
         email: email!,
         password: password!,
@@ -58,6 +60,8 @@ export default function LoginScreen() {
       console.log(error);
       setEmailError(error?.response?.data?.errors?.email);
       setPasswordError(error?.response?.data?.errors?.password);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -127,6 +131,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
 
           <ButtonComponent
+            loading={loading}
             style={{
               borderColor: colors.mainWhite,
               marginTop: 15,

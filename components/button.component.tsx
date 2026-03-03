@@ -1,5 +1,7 @@
 import { PropsWithChildren } from "react";
 import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
+import Colors from "@/constants/colors";
 
 const sizes = {
   small: 30,
@@ -12,16 +14,18 @@ interface ButtonComponentProps extends PropsWithChildren {
   onPress?: () => void
   size?: 'small' | 'medium' | 'big',
   disabled?: boolean,
+  loading?: boolean,
 }
 
-export default function ButtonComponent({ children, style, onPress, size, disabled }: ButtonComponentProps) {
-
+export default function ButtonComponent({ children, style, onPress, size, disabled, loading }: ButtonComponentProps) {
   return (
     <TouchableOpacity
-      disabled={disabled ?? false}
+      disabled={disabled || loading}
       onPress={onPress}
     >
-      <View style={[style, buttonStyles.styles, size ? { height: sizes[size] } : null ]}>{children}</View>
+      <View style={[style, buttonStyles.styles, size ? { height: sizes[size], justifyContent: 'center' } : { justifyContent: 'center' }]}>
+        {loading ? <ActivityIndicator color={Colors.mainWhite} /> : children}
+      </View>
     </TouchableOpacity>
   );
 }
