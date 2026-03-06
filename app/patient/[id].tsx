@@ -14,6 +14,7 @@ import PatientAPI from "@/services/patient";
 import osteocheckBlueBgLogo from "@/assets/images/osteocheck-blue-bg-logo.png";
 import FullScreenLoading from "@/components/fullScreenLoading.component";
 import Container from "@/components/container.component";
+import { translateQuestionnaireResponseStatus } from "@/helper/translateQuestionnaireResponseStatus";
 
 function getInitials(name: string): string {
     const parts = name.trim().split(" ");
@@ -183,6 +184,13 @@ export default function PatientDetailsScreen() {
                                         <MaterialCommunityIcons name="calendar-outline" size={12} color={colors.mainGray} />
                                         <AppText
                                             content={formatDate(response.createdAt)}
+                                            textProps={{ style: { color: colors.mainGray, fontSize: 12 } }}
+                                        />
+                                    </View>
+                                    <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 2 }}>
+                                        <MaterialCommunityIcons name="list-status" size={12} color={colors.mainGray} />
+                                        <AppText
+                                            content={`Status: ${translateQuestionnaireResponseStatus(response.status)}`}
                                             textProps={{ style: { color: colors.mainGray, fontSize: 12 } }}
                                         />
                                     </View>
