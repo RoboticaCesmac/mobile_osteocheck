@@ -36,26 +36,12 @@ export default function ConfigScreen() {
                     textProps={{ style: styles.sectionTitle }}
                 />
                 <View style={styles.sectionContainer}>
-                    <TouchableOpacity style={styles.listItem}>
-                        <View style={styles.listItemLeft}>
-                            <Feather name="mail" size={20} color={colors.mainBlack} />
-                            <AppText content="Alterar E-mail" textProps={{ style: styles.listItemText }} />
-                        </View>
-                        <AntDesign name="right" size={16} color={colors.successBlue} />
-                    </TouchableOpacity>
+
                     <View style={styles.divider} />
                     <TouchableOpacity style={styles.listItem}>
                         <View style={styles.listItemLeft}>
                             <Feather name="key" size={20} color={colors.mainBlack} />
                             <AppText content="Alterar Senha" textProps={{ style: styles.listItemText }} />
-                        </View>
-                        <AntDesign name="right" size={16} color={colors.successBlue} />
-                    </TouchableOpacity>
-                    <View style={styles.divider} />
-                    <TouchableOpacity style={styles.listItem}>
-                        <View style={styles.listItemLeft}>
-                            <Feather name="settings" size={20} color={colors.mainBlack} />
-                            <AppText content="Alterar Meus Dados" textProps={{ style: styles.listItemText }} />
                         </View>
                         <AntDesign name="right" size={16} color={colors.successBlue} />
                     </TouchableOpacity>

@@ -106,35 +106,13 @@ export default function HomeScreen() {
               style={homeScreenStyles.quickActionsTouchableOpacity}
             >
               <AntDesign
-                name="plus"
-                size={20}
-                style={homeScreenStyles.quickActionsIcon}
-              />
-              <AppText content="Nova Avaliação" />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={homeScreenStyles.quickActionsTouchableOpacity}
-            >
-              <AntDesign
                 name="user-add"
                 size={20}
                 style={homeScreenStyles.quickActionsIcon}
               />
-              <AppText content="Nova Avaliação" />
+              <AppText content="Novo Paciente" />
             </TouchableOpacity>
-          </View>
-        </View>
 
-        <View style={{ marginTop: 20 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              gap: 10,
-              alignItems: "center",
-            }}
-          >
             <TouchableOpacity
               onPress={onHandleGoToPatientsScreen}
               style={homeScreenStyles.quickActionsTouchableOpacity}
@@ -146,7 +124,18 @@ export default function HomeScreen() {
               />
               <AppText content="Ver Pacientes" />
             </TouchableOpacity>
+          </View>
+        </View>
 
+        <View style={{ marginTop: 20 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              gap: 10,
+              alignItems: "center",
+            }}
+          >
             <TouchableOpacity
               style={homeScreenStyles.quickActionsTouchableOpacity}
             >

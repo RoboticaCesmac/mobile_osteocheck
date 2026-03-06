@@ -8,6 +8,7 @@ export default function RootLayout() {
       <Stack initialRouteName="(auth)">
         <Stack.Screen name="(main)" options={{ headerShown: false }} />
         <Stack.Screen name="patient/[id]" options={{ headerShown: false }} />
+        <Stack.Screen name="questionnaire/[patientId]" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       </Stack>
     </AppContextProvider>

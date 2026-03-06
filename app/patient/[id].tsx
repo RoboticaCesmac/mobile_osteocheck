@@ -1,5 +1,5 @@
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Image, ScrollView } from "react-native";
 import { AntDesign, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "@/components/appText.component";
@@ -12,7 +12,6 @@ import { AppContext } from "@/context/appContext";
 import { Patient } from "@/domain/patient";
 import PatientAPI from "@/services/patient";
 import osteocheckBlueBgLogo from "@/assets/images/osteocheck-blue-bg-logo.png";
-import { ActivityIndicator } from "react-native-paper";
 import FullScreenLoading from "@/components/fullScreenLoading.component";
 import Container from "@/components/container.component";
 
@@ -41,14 +40,11 @@ export default function PatientDetailsScreen() {
     useFocusEffect(
         useCallback(() => {
             appContext.handleShowHeaderComponent(false, undefined);
-        }, [])
+            if (id) {
+                fetchPatient();
+            }
+        }, [id])
     );
-
-    useEffect(() => {
-        if (id) {
-            fetchPatient();
-        }
-    }, [id]);
 
     const fetchPatient = async () => {
         try {
@@ -156,42 +152,55 @@ export default function PatientDetailsScreen() {
                     textProps={{ style: { color: colors.mainBlack, fontWeight: "bold", fontSize: 16, marginBottom: 12, marginLeft: 4 } }}
                 />
 
-                <View style={[styles.cardSection, { paddingVertical: 18 }]}>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
-                        <AvatarComponent backgroundColor={colors.successBlue} padding={14}>
-                            <AppText
-                                content={patientInitials}
-                                textProps={{
-                                    style: { color: colors.mainWhite, fontWeight: "bold", fontSize: textSize.small },
-                                }}
-                            />
-                        </AvatarComponent>
+                {(!patient.questionnaireResponses || patient.questionnaireResponses.length === 0) ? (
+                    <AppText
+                        content="Nenhuma avaliação encontrada."
+                        textProps={{ style: { color: colors.mainGray, fontSize: 14, marginLeft: 4, fontStyle: "italic" } }}
+                    />
+                ) : (
+                    patient.questionnaireResponses.map((response) => (
+                        <View key={response.id} style={[styles.cardSection, { paddingVertical: 18 }]}>
+                            <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
+                                <AvatarComponent backgroundColor={colors.successBlue} padding={14}>
+                                    <AppText
+                                        content={patientInitials}
+                                        textProps={{
+                                            style: { color: colors.mainWhite, fontWeight: "bold", fontSize: textSize.small },
+                                        }}
+                                    />
+                                </AvatarComponent>
 
-                        <View style={{ flex: 1, gap: 3 }}>
-                            <AppText
-                                content={patient.name}
-                                textProps={{ style: { color: colors.darkBlue, fontWeight: "bold", fontSize: textSize.small } }}
-                            />
-                            <AppText
-                                content="Avaliação #  5821"
-                                textProps={{ style: { color: colors.mainBlack, fontSize: 12 } }}
-                            />
-                            <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 2 }}>
-                                <MaterialCommunityIcons name="calendar-outline" size={12} color={colors.mainGray} />
-                                <AppText
-                                    content="18/10/2025"
-                                    textProps={{ style: { color: colors.mainGray, fontSize: 12 } }}
-                                />
+                                <View style={{ flex: 1, gap: 3 }}>
+                                    <AppText
+                                        content={patient.name}
+                                        textProps={{ style: { color: colors.darkBlue, fontWeight: "bold", fontSize: textSize.small } }}
+                                    />
+                                    <AppText
+                                        content={`Avaliação #${response.id}`}
+                                        textProps={{ style: { color: colors.mainBlack, fontSize: 12 } }}
+                                    />
+                                    <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 2 }}>
+                                        <MaterialCommunityIcons name="calendar-outline" size={12} color={colors.mainGray} />
+                                        <AppText
+                                            content={formatDate(response.createdAt)}
+                                            textProps={{ style: { color: colors.mainGray, fontSize: 12 } }}
+                                        />
+                                    </View>
+                                </View>
                             </View>
                         </View>
-                    </View>
-                </View>
+                    ))
+                )}
 
             </ScrollView>
 
             <View style={styles.footer}>
                 <ButtonComponent
                     style={[styles.button, { backgroundColor: colors.successBlue, borderColor: colors.successBlue }]}
+                    onPress={() => router.push({
+                        pathname: "/questionnaire/[patientId]",
+                        params: { patientId: String(patient.id) }
+                    })}
                 >
                     <AppText content="Iniciar nova avaliação" textProps={{ style: { color: colors.mainWhite, fontWeight: "bold" } }} />
                 </ButtonComponent>

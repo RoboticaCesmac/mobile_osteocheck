@@ -1,3 +1,5 @@
+import { QuestionnaireResponse } from "./questionnaireResponse";
+
 export enum PatientsGender {
     Male = 'm',
     Femal = 'f',
@@ -9,6 +11,7 @@ export interface Patient {
     cpf: string;
     dateOfBirth: Date;
     gender: PatientsGender;
+    questionnaireResponses: QuestionnaireResponse[];
     createdAt: Date;
     updatedAt: Date;
     deletedAt: Date;
