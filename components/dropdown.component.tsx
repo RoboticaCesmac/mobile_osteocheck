@@ -104,31 +104,55 @@ export default function DropdownComponent(props: DropdownComponentProps) {
           overflow: "hidden",
         }}
       >
-        <FlatList
-          scrollEnabled={true}
-          indicatorStyle="black"
-          data={props.listItems}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => handleSelectItem(item.value)}
-              style={dropdownComponentStyles.listItem}
-            >
-              <CheckBoxComponent
-                isChecked={props.selectedItems?.includes(item.value)}
-                status="unchecked"
-              />
-              <AppText
-                content={item.label}
-                textProps={{
-                  style: dropdownComponentStyles.itemListText,
-                }}
-              />
-            </TouchableOpacity>
-          )}
-        />
+        {props.scrollEnabled === false ? (
+          <View>
+            {props.listItems.map((item, index) => (
+              <TouchableOpacity
+                key={index.toString()}
+                onPress={() => handleSelectItem(item.value)}
+                style={dropdownComponentStyles.listItem}
+              >
+                <CheckBoxComponent
+                  isChecked={props.selectedItems?.includes(item.value)}
+                  status="unchecked"
+                />
+                <AppText
+                  content={item.label}
+                  textProps={{
+                    style: dropdownComponentStyles.itemListText,
+                  }}
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
+        ) : (
+          <FlatList
+            scrollEnabled={true}
+            indicatorStyle="black"
+            data={props.listItems}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => handleSelectItem(item.value)}
+                style={dropdownComponentStyles.listItem}
+              >
+                <CheckBoxComponent
+                  isChecked={props.selectedItems?.includes(item.value)}
+                  status="unchecked"
+                />
+                <AppText
+                  content={item.label}
+                  textProps={{
+                    style: dropdownComponentStyles.itemListText,
+                  }}
+                />
+              </TouchableOpacity>
+            )}
+          />
+        )}
 
         {props.hasSubmitButton ? (
-          <ButtonComponent 
+          <ButtonComponent
             onPress={handleSubmit}
             style={dropdownComponentStyles.submitButton}
           >

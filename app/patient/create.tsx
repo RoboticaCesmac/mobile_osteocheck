@@ -177,6 +177,7 @@ export default function CreatePatientScreen() {
                         textProps={{ style: styles.label }}
                     />
                     <DropdownComponent
+                        scrollEnabled={false}
                         placeholder="Selecione..."
                         listItems={genderOptions}
                         selectedItems={gender}
