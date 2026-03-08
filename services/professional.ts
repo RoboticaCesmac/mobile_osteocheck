@@ -1,6 +1,5 @@
 import { Professional } from "@/domain/professional";
 import { Api, ServiceResponse } from "./api";
-import { Patient } from "@/domain/patient";
 import { ProfessionalPatients } from "@/domain/professionalPatients";
 
 

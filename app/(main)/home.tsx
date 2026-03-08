@@ -40,6 +40,10 @@ export default function HomeScreen() {
     router.push("/(main)/patients");
   }
 
+  const onHandleGoToCreatePatientScreen = () => {
+    router.push("/patient/create");
+  }
+
   return (
     <Container>
       <View style={homeScreenStyles.headerComponent}>
@@ -103,6 +107,7 @@ export default function HomeScreen() {
             }}
           >
             <TouchableOpacity
+              onPress={onHandleGoToCreatePatientScreen}
               style={homeScreenStyles.quickActionsTouchableOpacity}
             >
               <AntDesign

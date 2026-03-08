@@ -210,7 +210,7 @@ export default function PatientDetailsScreen() {
                         params: { patientId: String(patient.id) }
                     })}
                 >
-                    <AppText content="Iniciar nova avaliação" textProps={{ style: { color: colors.mainWhite, fontWeight: "bold" } }} />
+                    <AppText content="Iniciar/Continuar avaliação" textProps={{ style: { color: colors.mainWhite, fontWeight: "bold" } }} />
                 </ButtonComponent>
             </View>
         </View>

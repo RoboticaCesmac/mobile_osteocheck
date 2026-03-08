@@ -2,7 +2,7 @@ import { QuestionnaireResponse } from "./questionnaireResponse";
 
 export enum PatientsGender {
     Male = 'm',
-    Femal = 'f',
+    Female = 'f',
 }
 
 export interface Patient {
