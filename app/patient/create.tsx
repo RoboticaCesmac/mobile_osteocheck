@@ -94,7 +94,7 @@ export default function CreatePatientScreen() {
             const response = await PatientAPI.create({
                 professionalId,
                 name: initials,
-                cpf: cpf.replace(/\D/g, ""), // Send raw CPF
+                cpf: cpf.replace(/\D/g, ""),
                 dateOfBirth,
                 gender: selectedGenderValue,
             });
@@ -109,7 +109,6 @@ export default function CreatePatientScreen() {
                 setInitialsError(error.response.data.errors.name);
                 setCpfError(error.response.data.errors.cpf);
                 setGenderError(error.response.data.errors.gender);
-                // Note: adjust the date error handling if backend returns array
             }
         } finally {
             setLoading(false);

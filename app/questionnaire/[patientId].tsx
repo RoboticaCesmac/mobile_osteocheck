@@ -22,7 +22,7 @@ export default function QuestionnaireScreen() {
     const [submitting, setSubmitting] = useState<boolean>(false);
     const [question, setQuestion] = useState<Question | null>(null);
 
-    // State to store the user's answer for the current question
+
     const [selectedOptionIds, setSelectedOptionIds] = useState<number[]>([]);
     const [textAnswer, setTextAnswer] = useState<string>("");
 
@@ -75,7 +75,7 @@ export default function QuestionnaireScreen() {
 
     const handleNext = async () => {
         if (!question) return;
-        // Validation based on type
+
         if (
             (question.type === QuestionType.SINGLE_CHOICE || question.type === QuestionType.MULTIPLE_CHOICE) &&
             question.isRequired &&
@@ -88,9 +88,9 @@ export default function QuestionnaireScreen() {
         try {
             setSubmitting(true);
 
-            // Note: The backend expects questionOptionsIds as number[]. 
-            // In case of text or number or date, you might need a different DTO field, 
-            // but the prompt only specified questionOptionsIds. We'll send that for choices.
+
+
+
             const payload = {
                 questionnaireType: "jawAssessment",
                 patientId: Number(patientId),
@@ -264,7 +264,7 @@ export default function QuestionnaireScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.transparentWhite, // usually a light off-white or white
+        backgroundColor: colors.transparentWhite,
     },
     header: {
         flexDirection: "row",
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
     },
     optionButtonSelected: {
         borderColor: colors.successBlue,
-        backgroundColor: "#EAF2FF", // Light blue tint
+        backgroundColor: "#EAF2FF",
     },
     optionText: {
         fontSize: 16,
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     checkboxOuter: {
-        borderRadius: 4, // Make it square for multiple choice
+        borderRadius: 4,
     },
     radioOuterSelected: {
         borderColor: colors.successBlue,
