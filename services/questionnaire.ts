@@ -32,6 +32,10 @@ class QuestionnaireAPI extends Api {
         });
         return await this.get(`/questionnaire/progress?${queryParams.toString()}`);
     }
+
+    async generatePdf(questionnaireResponseId: number): Promise<any> {
+        return await this.post(`/questionnaire/${questionnaireResponseId}/pdf`, undefined, { responseType: 'blob' });
+    }
 }
 
 export default new QuestionnaireAPI();
