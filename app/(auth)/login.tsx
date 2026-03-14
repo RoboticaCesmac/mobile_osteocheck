@@ -14,6 +14,7 @@ import { useCallback, useContext, useState } from "react";
 import { storeData } from "@/utils/asyncStorage";
 import { AppContext } from "@/context/appContext";
 import { NotificationType } from "@/components/notification.component";
+import { UserContext } from "@/context/userContext";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState<string>();
@@ -23,6 +24,7 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState<boolean>(false);
 
   const appContext = useContext(AppContext);
+  const userContext = useContext(UserContext);
   const router = useRouter();
 
   useFocusEffect(useCallback(() => {
@@ -39,7 +41,8 @@ export default function LoginScreen() {
 
   async function verifyProfile() {
     try {
-      const a = await AuthAPI.profile();
+      const user = await AuthAPI.profile();
+      userContext.handleSetUser(user.data);
       onHandleGoToMainHomeScreen();
     } catch (error: any) {
       console.log(error);
@@ -55,9 +58,11 @@ export default function LoginScreen() {
       });
       storeData("userJWT", auth.data.jwt);
       appContext.handleSetNotification(NotificationType.Success, "Login realizado com sucesso");
-      onHandleGoToMainHomeScreen();
+      await verifyProfile();
     } catch (error: any) {
-      console.log(error);
+      if (!error?.response?.data?.errors) {
+        appContext.handleSetNotification(NotificationType.Error, error?.response?.data?.message ?? 'Credenciais não encontradas');
+      }
       setEmailError(error?.response?.data?.errors?.email);
       setPasswordError(error?.response?.data?.errors?.password);
     } finally {

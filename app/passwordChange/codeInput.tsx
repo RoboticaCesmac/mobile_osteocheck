@@ -7,47 +7,41 @@ import AppText from "@/components/appText.component";
 import ButtonComponent from "@/components/button.component";
 import OTPTextInputComponent from "@/components/otpTextInput.component";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import AuthAPI from "@/services/auth";
-import { useContext, useState } from "react";
+import { useState, useContext } from "react";
+import professionalApi from "@/services/professional";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { AppContext } from "@/context/appContext";
 import { NotificationType } from "@/components/notification.component";
 
-export default function RegisterConfirmationCodeScreen() {
+export default function PasswordChangeCodeInputScreen() {
   const router = useRouter();
-  const { email } = useLocalSearchParams<{ email: string }>();
   const appContext = useContext(AppContext);
-
-  const [code, setCode] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const { email } = useLocalSearchParams<{ email: string }>();
+  const [code, setCode] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const onHandleConfirmCode = async () => {
-    if (!code || code.length !== 5) {
-      appContext.handleSetNotification(NotificationType.Error, "Por favor, insira um código válido de 5 dígitos.");
+    if (!code || code.length < 5) {
+      appContext.handleSetNotification(NotificationType.Error, "Por favor, insira o código completo.");
       return;
     }
 
     try {
-      setLoading(true);
-      await AuthAPI.confirmSignupToken({
-        professionalEmail: email,
-        signupToken: code,
-      });
-
-
-      appContext.handleSetNotification(NotificationType.Success, "Conta ativada com sucesso");
-      router.replace('/(auth)/login');
+      setIsLoading(true);
+      await professionalApi.confirmForgotPasswordToken({ email, forgotPasswordToken: code });
+      router.push({ pathname: "/passwordChange/newPassword", params: { email } });
     } catch (error: any) {
-      console.log(error.response.data)
-      if (!error?.response?.data?.errors) {
-        appContext.handleSetNotification(NotificationType.Error, error?.response?.data?.message ?? "Erro ao confirmar código");
-      }
+      appContext.handleSetNotification(NotificationType.Error, error?.response?.data?.message || "Código inválido ou expirado.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
-  };
+  }
 
   return (
     <Container>
+      <View style={{ position: "absolute", top: 50, left: 20, zIndex: 10 }}>
+        <AntDesign name="left" size={30} color={colors.mainWhite} onPress={() => router.back()} />
+      </View>
       <Image
         source={osteocheckLogo}
         style={{
@@ -56,7 +50,7 @@ export default function RegisterConfirmationCodeScreen() {
           margin: "auto",
         }}
       />
-      <View style={registerConfirmationCodeScreen.infoContainer}>
+      <View style={styles.infoContainer}>
         <AppText
           textProps={{
             style: {
@@ -66,7 +60,7 @@ export default function RegisterConfirmationCodeScreen() {
               fontWeight: 'bold'
             },
           }}
-          content="Autenticação"
+          content="Alterar senha"
         />
 
         <AppText
@@ -80,24 +74,24 @@ export default function RegisterConfirmationCodeScreen() {
           textProps={{
             style: { fontSize: textSize.regular, marginTop: 40, marginBottom: 20, color: colors.mainWhite }
           }}
-          content="Enviamos um e-mail com um código de 5 caracteres. Para ativar sua conta, digite o código abaixo."
+          content="Enviamos um e-mail com um código de 5 caracteres. Digite o código abaixo."
         />
 
         <OTPTextInputComponent onChangeText={setCode} />
 
         <ButtonComponent
-          loading={loading}
-          onPress={onHandleConfirmCode}
           style={{
             borderColor: colors.mainWhite,
             marginTop: 15,
           }}
+          onPress={onHandleConfirmCode}
+          disabled={isLoading}
         >
           <AppText
             textProps={{
               style: { margin: "auto", color: colors.mainWhite },
             }}
-            content="Confirmar Código"
+            content={isLoading ? "Verificando..." : "Confirmar Código"}
           />
         </ButtonComponent>
       </View>
@@ -105,10 +99,7 @@ export default function RegisterConfirmationCodeScreen() {
   );
 }
 
-const registerConfirmationCodeScreen = StyleSheet.create({
-  whiteText: {
-    color: colors.mainWhite,
-  },
+const styles = StyleSheet.create({
   infoContainer: {
     backgroundColor: colors.darkBlue,
     padding: 30,

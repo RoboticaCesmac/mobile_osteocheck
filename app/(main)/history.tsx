@@ -5,69 +5,22 @@ import SearchInputComponent from "@/components/searchInput.component";
 import colors from "@/constants/colors";
 import textSize from "@/constants/textSize";
 import { AppContext, ScreenName } from "@/context/appContext";
-import { Patient } from "@/domain/patient";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useContext, useMemo, useState } from "react";
 import {
+    ActivityIndicator,
     FlatList,
     StyleSheet,
     TouchableOpacity,
     View,
 } from "react-native";
-
-const MOCK_PATIENTS: Patient[] = [
-    {
-        id: 1,
-        name: "Carlos Andrade",
-        cpf: "123.456.789-00",
-        dateOfBirth: new Date("1985-05-10"),
-        gender: "m" as any,
-        createdAt: new Date("2025-10-15"),
-        updatedAt: new Date("2025-10-15"),
-        deletedAt: null as any,
-    },
-    {
-        id: 2,
-        name: "Ana Souza",
-        cpf: "987.654.321-00",
-        dateOfBirth: new Date("1990-08-22"),
-        gender: "f" as any,
-        createdAt: new Date("2025-10-15"),
-        updatedAt: new Date("2025-10-15"),
-        deletedAt: null as any,
-    },
-    {
-        id: 3,
-        name: "Roberto Lima",
-        cpf: "111.222.333-44",
-        dateOfBirth: new Date("1978-03-17"),
-        gender: "m" as any,
-        createdAt: new Date("2025-10-15"),
-        updatedAt: new Date("2025-10-15"),
-        deletedAt: null as any,
-    },
-    {
-        id: 4,
-        name: "Fernanda Costa",
-        cpf: "555.666.777-88",
-        dateOfBirth: new Date("1995-12-01"),
-        gender: "f" as any,
-        createdAt: new Date("2025-10-15"),
-        updatedAt: new Date("2025-10-15"),
-        deletedAt: null as any,
-    },
-    {
-        id: 5,
-        name: "Marcos Oliveira",
-        cpf: "999.000.111-22",
-        dateOfBirth: new Date("1982-07-30"),
-        gender: "m" as any,
-        createdAt: new Date("2025-10-15"),
-        updatedAt: new Date("2025-10-15"),
-        deletedAt: null as any,
-    },
-];
+import professionalApi from "@/services/professional";
+import { QuestionnaireResponse } from "@/domain/questionnaireResponse";
+import QuestionnaireAPI from "@/services/questionnaire";
+import { File, Paths } from "expo-file-system/next";
+import * as Sharing from "expo-sharing";
+import { NotificationType } from "@/components/notification.component";
 
 function getInitials(name: string): string {
     const parts = name.trim().split(" ");
@@ -84,17 +37,20 @@ function formatDate(date: Date): string {
 }
 
 interface PatientCardProps {
-    patient: Patient;
+    response: QuestionnaireResponse;
     index: number;
+    pdfLoading: number | null;
+    onHandlePdf: (id: number) => void;
 }
 
-function PatientCard({ patient, index }: PatientCardProps) {
+function PatientCard({ response, index, pdfLoading, onHandlePdf }: PatientCardProps) {
+    const patientName = response.patient?.name || "Paciente Desconhecido";
     return (
         <View style={styles.card}>
             <View style={styles.cardLeft}>
                 <AvatarComponent backgroundColor={colors.successBlue} padding={12}>
                     <AppText
-                        content={getInitials(patient.name)}
+                        content={getInitials(patientName)}
                         textProps={{
                             style: {
                                 color: colors.mainWhite,
@@ -107,7 +63,7 @@ function PatientCard({ patient, index }: PatientCardProps) {
 
                 <View style={styles.cardInfo}>
                     <AppText
-                        content={patient.name}
+                        content={patientName}
                         textProps={{ style: styles.cardName }}
                     />
                     <AppText
@@ -121,7 +77,7 @@ function PatientCard({ patient, index }: PatientCardProps) {
                             color={colors.mainGray}
                         />
                         <AppText
-                            content={formatDate(patient.createdAt)}
+                            content={formatDate(response.createdAt)}
                             textProps={{ style: styles.cardDate }}
                         />
                     </View>
@@ -129,12 +85,16 @@ function PatientCard({ patient, index }: PatientCardProps) {
             </View>
 
             <View style={styles.cardActions}>
-                <TouchableOpacity style={styles.actionButton}>
-                    <Feather name="eye" size={20} color={colors.darkBlue} />
-                </TouchableOpacity>
-                <View style={styles.actionDivider} />
-                <TouchableOpacity style={styles.actionButton}>
-                    <Feather name="download" size={20} color={colors.darkBlue} />
+                <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={() => onHandlePdf(response.id)}
+                    disabled={pdfLoading === response.id}
+                >
+                    {pdfLoading === response.id ? (
+                        <ActivityIndicator size={20} color={colors.darkBlue} />
+                    ) : (
+                        <Feather name="download" size={20} color={colors.darkBlue} />
+                    )}
                 </TouchableOpacity>
             </View>
         </View>
@@ -144,19 +104,94 @@ function PatientCard({ patient, index }: PatientCardProps) {
 export default function HistoricoScreen() {
     const appContext = useContext(AppContext);
     const [search, setSearch] = useState("");
+    const [responses, setResponses] = useState<QuestionnaireResponse[]>([]);
+    const [page, setPage] = useState(1);
+    const [limit] = useState(10);
+    const [hasMore, setHasMore] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const [pdfLoading, setPdfLoading] = useState<number | null>(null);
+
+    const handlePdf = async (responseId: number) => {
+        try {
+            setPdfLoading(responseId);
+            const blob = await QuestionnaireAPI.generatePdf(responseId);
+
+            const base64Data = await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const dataUrl = reader.result as string;
+                    const base64 = dataUrl.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+
+            const pdfFile = new File(Paths.cache, `avaliacao_${responseId}.pdf`);
+            const binaryString = atob(base64Data);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            pdfFile.write(bytes);
+
+            await Sharing.shareAsync(pdfFile.uri, {
+                mimeType: 'application/pdf',
+                dialogTitle: `Avaliação #${responseId}`,
+                UTI: 'com.adobe.pdf',
+            });
+        } catch (error: any) {
+            appContext.handleSetNotification(
+                NotificationType.Error,
+                error.message || "Erro ao gerar PDF"
+            );
+        } finally {
+            setPdfLoading(null);
+        }
+    };
+
+    const fetchResponses = useCallback(async (pageNumber: number, shouldReset: boolean = false) => {
+        if (loading || (!hasMore && !shouldReset)) return;
+
+        try {
+            setLoading(true);
+            const response = await professionalApi.getLastQuestionnaireResponses({ page: pageNumber, limit });
+
+            if (response && response.data) {
+                if (shouldReset) {
+                    setResponses(response.data);
+                } else {
+                    setResponses(prev => [...prev, ...response.data]);
+                }
+                setHasMore(response.meta.page < response.meta.totalPages);
+                setPage(response.meta.page);
+            }
+        } catch (error) {
+            console.error("Error fetching questionnaire responses:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [limit, hasMore, loading]);
 
     useFocusEffect(
         useCallback(() => {
             appContext.handleShowHeaderComponent(true, ScreenName.History);
+            fetchResponses(1, true);
         }, []),
     );
 
-    const filteredPatients = useMemo(() => {
-        if (!search.trim()) return MOCK_PATIENTS;
-        return MOCK_PATIENTS.filter((p) =>
-            p.name.toLowerCase().includes(search.toLowerCase()),
+    const filteredResponses = useMemo(() => {
+        if (!search.trim()) return responses;
+        return responses.filter((r) =>
+            r.patient?.name.toLowerCase().includes(search.toLowerCase()),
         );
-    }, [search]);
+    }, [search, responses]);
+
+    const handleLoadMore = () => {
+        if (hasMore && !loading) {
+            fetchResponses(page + 1);
+        }
+    };
 
     return (
         <Container>
@@ -164,32 +199,48 @@ export default function HistoricoScreen() {
                 <SearchInputComponent value={search} onChangeText={setSearch} />
 
                 <FlatList
-                    data={filteredPatients}
+                    data={filteredResponses}
                     keyExtractor={(item) => String(item.id)}
                     renderItem={({ item, index }) => (
-                        <PatientCard patient={item} index={index} />
+                        <PatientCard
+                            response={item}
+                            index={index}
+                            pdfLoading={pdfLoading}
+                            onHandlePdf={handlePdf}
+                        />
                     )}
                     contentContainerStyle={styles.listContent}
                     showsVerticalScrollIndicator={false}
                     scrollEnabled={false}
                     ListEmptyComponent={
                         <View style={styles.emptyContainer}>
-                            <Feather name="users" size={40} color={colors.opaqueBlue} />
-                            <AppText
-                                content="Nenhum paciente encontrado."
-                                textProps={{ style: styles.emptyText }}
-                            />
+                            {loading ? (
+                                <ActivityIndicator size="large" color={colors.darkBlue} />
+                            ) : (
+                                <>
+                                    <Feather name="users" size={40} color={colors.opaqueBlue} />
+                                    <AppText
+                                        content="Nenhum paciente encontrado."
+                                        textProps={{ style: styles.emptyText }}
+                                    />
+                                </>
+                            )}
                         </View>
                     }
                     ListFooterComponent={
-                        filteredPatients.length > 0 ? (
-                            <TouchableOpacity style={styles.loadMoreButton}>
-                                <AppText
-                                    content="Ver mais"
-                                    textProps={{ style: styles.loadMoreText }}
-                                />
-                            </TouchableOpacity>
-                        ) : null
+                        <View>
+                            {loading && responses.length > 0 && (
+                                <ActivityIndicator size="small" color={colors.darkBlue} style={{ marginTop: 10 }} />
+                            )}
+                            {hasMore && responses.length > 0 && !loading && (
+                                <TouchableOpacity style={styles.loadMoreButton} onPress={handleLoadMore}>
+                                    <AppText
+                                        content="Ver mais"
+                                        textProps={{ style: styles.loadMoreText }}
+                                    />
+                                </TouchableOpacity>
+                            )}
+                        </View>
                     }
                 />
             </View>

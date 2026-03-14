@@ -6,9 +6,10 @@ interface OTPTextInputComponentProps {
   tintColor?: string;
   offTintColor?: string;
   textColor?: string;
+  onChangeText?: (text: string) => void;
 }
 
-export default function OTPTextInputComponent({ textColor, inputCount, offTintColor, tintColor }: OTPTextInputComponentProps) {
+export default function OTPTextInputComponent({ textColor, inputCount, offTintColor, tintColor, onChangeText }: OTPTextInputComponentProps) {
   return (
     <OTPTextInput
       inputCount={inputCount ?? 5}
@@ -20,7 +21,7 @@ export default function OTPTextInputComponent({ textColor, inputCount, offTintCo
         borderBottomWidth: 1,
         color: textColor ?? 'white'
       } as any }
-      handleTextChange={(code) => console.log(code)}
+      handleTextChange={onChangeText ? onChangeText : (code) => console.log(code)}
     />
   );
 }

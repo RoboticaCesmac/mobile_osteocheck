@@ -4,7 +4,7 @@ import colors from "@/constants/colors";
 import textSize from "@/constants/textSize";
 import { AppContext, ScreenName } from "@/context/appContext";
 import { AntDesign, Feather } from "@expo/vector-icons";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useContext, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import ButtonComponent from "@/components/button.component";
@@ -13,6 +13,11 @@ import ConfirmModalComponent from "@/components/confirmModal.component";
 export default function ConfigScreen() {
     const appContext = useContext(AppContext);
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+    const router = useRouter();
+
+    const onHandleChangePassword = () => {
+        router.push("/passwordChange/emailInput");
+    }
 
     const onHandleLogOut = () => {
         appContext.handleLogout();
@@ -38,7 +43,7 @@ export default function ConfigScreen() {
                 <View style={styles.sectionContainer}>
 
                     <View style={styles.divider} />
-                    <TouchableOpacity style={styles.listItem}>
+                    <TouchableOpacity style={styles.listItem} onPress={onHandleChangePassword}>
                         <View style={styles.listItemLeft}>
                             <Feather name="key" size={20} color={colors.mainBlack} />
                             <AppText content="Alterar Senha" textProps={{ style: styles.listItemText }} />

@@ -1,5 +1,6 @@
 import { QuestionnaireResult } from "./questionnaireResult";
 import { QuestionResponseAnswer } from "./questionResponseAnswer";
+import { Patient } from "./patient";
 
 export enum ResponseStatus {
     IN_PROGRESS = 'inProgress',
@@ -29,4 +30,6 @@ export interface QuestionnaireResponse {
     result: QuestionnaireResult;
 
     answers: QuestionResponseAnswer[];
+
+    patient?: Patient;
 }

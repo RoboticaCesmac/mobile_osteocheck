@@ -9,6 +9,10 @@ import AppText from "@/components/appText.component";
 import ButtonComponent from "@/components/button.component";
 import BadgeComponent from "@/components/badge.component";
 import { useRouter } from "expo-router";
+import AuthAPI from "@/services/auth";
+import { useContext, useState } from "react";
+import { AppContext } from "@/context/appContext";
+import { NotificationType } from "@/components/notification.component";
 
 const registerFieldsInfos = [
   "Mínimo de 8 caracteres",
@@ -20,9 +24,45 @@ const registerFieldsInfos = [
 
 export default function RegisterScreen() {
   const router = useRouter();
+  const appContext = useContext(AppContext);
 
-  const onHandleGoToConfirmationCode = () => {
-    router.push('/(auth)/registerConfirmationCode');
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+
+  const [nameError, setNameError] = useState<string[]>();
+  const [emailError, setEmailError] = useState<string[]>();
+  const [passwordError, setPasswordError] = useState<string[]>();
+  const [confirmPasswordError, setConfirmPasswordError] = useState<string[]>();
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const onHandleGoToConfirmationCode = async () => {
+    try {
+      if (password !== confirmPassword) {
+        setConfirmPasswordError(["As senhas não coincidem"]);
+        return;
+      }
+      setConfirmPasswordError(undefined);
+
+      setLoading(true);
+      await AuthAPI.signUp({
+        name,
+        email,
+        password,
+      });
+      appContext.handleSetNotification(NotificationType.Success, "Cadastro realizado com sucesso");
+      router.push({ pathname: '/(auth)/registerConfirmationCode', params: { email } });
+    } catch (error: any) {
+      if (!error?.response?.data?.errors) {
+        appContext.handleSetNotification(NotificationType.Error, error?.response?.data?.message ?? 'Erro ao cadastrar');
+      }
+      setNameError(error?.response?.data?.errors?.name);
+      setEmailError(error?.response?.data?.errors?.email);
+      setPasswordError(error?.response?.data?.errors?.password);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -59,6 +99,9 @@ export default function RegisterScreen() {
             <InputComponent
               style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Nome completo"
+              value={name}
+              onChangeText={setName}
+              errorText={nameError}
             />
           </View>
           <View>
@@ -71,6 +114,9 @@ export default function RegisterScreen() {
             <InputComponent
               style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="exemplo@hotmail.com"
+              value={email}
+              onChangeText={setEmail}
+              errorText={emailError}
             />
           </View>
           <View>
@@ -83,6 +129,10 @@ export default function RegisterScreen() {
             <InputComponent
               style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Senha"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+              errorText={passwordError}
             />
           </View>
           <View>
@@ -95,6 +145,10 @@ export default function RegisterScreen() {
             <InputComponent
               style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Confirmação de senha"
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              errorText={confirmPasswordError}
             />
           </View>
 
@@ -114,6 +168,7 @@ export default function RegisterScreen() {
           </View>
 
           <ButtonComponent
+            loading={loading}
             style={{
               borderColor: colors.mainWhite,
               marginTop: 15,

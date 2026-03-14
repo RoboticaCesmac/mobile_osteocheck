@@ -1,7 +1,9 @@
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useContext, useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Image, ScrollView } from "react-native";
-import { AntDesign, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { View, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator } from "react-native";
+import { AntDesign, Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { File, Paths } from "expo-file-system/next";
+import * as Sharing from "expo-sharing";
 import AppText from "@/components/appText.component";
 import AvatarComponent from "@/components/avatar.component";
 import ButtonComponent from "@/components/button.component";
@@ -11,6 +13,7 @@ import textSize from "@/constants/textSize";
 import { AppContext } from "@/context/appContext";
 import { Patient } from "@/domain/patient";
 import PatientAPI from "@/services/patient";
+import QuestionnaireAPI from "@/services/questionnaire";
 import osteocheckBlueBgLogo from "@/assets/images/osteocheck-blue-bg-logo.png";
 import FullScreenLoading from "@/components/fullScreenLoading.component";
 import Container from "@/components/container.component";
@@ -33,6 +36,7 @@ function formatDate(date: string | Date): string {
 export default function PatientDetailsScreen() {
     const [patient, setPatient] = useState<Patient | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const [pdfLoading, setPdfLoading] = useState<number | null>(null);
 
     const { id } = useLocalSearchParams();
     const router = useRouter();
@@ -60,6 +64,45 @@ export default function PatientDetailsScreen() {
             appContext.handleSetNotification(NotificationType.Error, error.message || "Erro ao buscar paciente");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handlePdf = async (responseId: number) => {
+        try {
+            setPdfLoading(responseId);
+            const blob = await QuestionnaireAPI.generatePdf(responseId);
+
+            const base64Data = await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const dataUrl = reader.result as string;
+                    const base64 = dataUrl.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+
+            const pdfFile = new File(Paths.cache, `avaliacao_${responseId}.pdf`);
+            const binaryString = atob(base64Data);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            pdfFile.write(bytes);
+
+            await Sharing.shareAsync(pdfFile.uri, {
+                mimeType: 'application/pdf',
+                dialogTitle: `Avaliação #${responseId}`,
+                UTI: 'com.adobe.pdf',
+            });
+        } catch (error: any) {
+            appContext.handleSetNotification(
+                NotificationType.Error,
+                error.message || "Erro ao gerar PDF"
+            );
+        } finally {
+            setPdfLoading(null);
         }
     };
 
@@ -195,6 +238,18 @@ export default function PatientDetailsScreen() {
                                         />
                                     </View>
                                 </View>
+
+                                <TouchableOpacity
+                                    style={styles.actionButton}
+                                    onPress={() => handlePdf(response.id)}
+                                    disabled={pdfLoading === response.id}
+                                >
+                                    {pdfLoading === response.id ? (
+                                        <ActivityIndicator size={20} color={colors.darkBlue} />
+                                    ) : (
+                                        <Feather name="download" size={24} color={colors.darkBlue} />
+                                    )}
+                                </TouchableOpacity>
                             </View>
                         </View>
                     ))
@@ -317,5 +372,9 @@ const styles = StyleSheet.create({
     },
     button: {
         borderRadius: 30,
+    },
+    actionButton: {
+        padding: 6,
+        marginLeft: 4,
     },
 });

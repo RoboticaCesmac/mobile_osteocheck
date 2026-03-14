@@ -44,6 +44,10 @@ export default function HomeScreen() {
     router.push("/patient/create");
   }
 
+  const onHandleGoToHistoryScreen = () => {
+    router.push("/(main)/history");
+  }
+
   return (
     <Container>
       <View style={homeScreenStyles.headerComponent}>
@@ -142,6 +146,7 @@ export default function HomeScreen() {
             }}
           >
             <TouchableOpacity
+              onPress={onHandleGoToHistoryScreen}
               style={homeScreenStyles.quickActionsTouchableOpacity}
             >
               <AntDesign
