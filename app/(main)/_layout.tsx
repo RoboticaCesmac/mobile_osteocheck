@@ -12,6 +12,13 @@ export default function MainLayout() {
         }}
       />
       <Tabs.Screen
+        name="biblioteca"
+        options={{
+          tabBarLabel: 'Biblioteca',
+          tabBarIcon: ({ color }) => <AntDesign name="book" size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="history"
         options={{
           tabBarLabel: 'Histórico',
