@@ -1,17 +1,21 @@
 import TextSize from "@/constants/textSize";
-import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
+import { StyleSheet, TextInput, TextInputProps, View, TouchableOpacity } from "react-native";
 import AppText from "./appText.component";
 import Colors from "@/constants/colors";
 import { ActivityIndicator } from "react-native-paper";
+import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
 
 export interface InputComponentProps extends TextInputProps {
   errorText?: string[];
   isLoading?: boolean;
   suffix?: string;
+  isPassword?: boolean;
 }
 
 export default function InputComponent(props: InputComponentProps) {
-  const { suffix, ...restProps } = props;
+  const { suffix, isPassword, secureTextEntry, ...restProps } = props;
+  const [showPassword, setShowPassword] = useState(false);
 
   const getErrorText = () => {
     const formatedText = props.errorText?.join("\n");
@@ -21,6 +25,8 @@ export default function InputComponent(props: InputComponentProps) {
     return formatedText;
   };
 
+  const isSecure = isPassword ? !showPassword : secureTextEntry;
+
   return (
     <View>
       <View style={textInputStyles.inputContainer}>
@@ -29,13 +35,14 @@ export default function InputComponent(props: InputComponentProps) {
           style={[
             textInputStyles.styles,
             props.isLoading ? { paddingVertical: 3 } : {},
-            suffix ? { paddingRight: 50, } : {},
+            suffix || isPassword ? { paddingRight: 50, } : {},
           ]}
+          secureTextEntry={isSecure}
           {...restProps}
           value={props.isLoading ? "" : props.value}
           placeholder={props.isLoading ? "" : props.placeholder}
         />
-        {suffix && (
+        {suffix && !isPassword && (
           <View style={textInputStyles.suffixWrapper}>
             <View style={textInputStyles.suffixContent}>
               <AppText
@@ -48,6 +55,17 @@ export default function InputComponent(props: InputComponentProps) {
                 }}
               />
             </View>
+          </View>
+        )}
+        {isPassword && (
+          <View style={textInputStyles.suffixWrapper}>
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={{ padding: 5 }}>
+              <Ionicons
+                name={showPassword ? "eye-off" : "eye"}
+                size={20}
+                color={Colors.mainBlack}
+              />
+            </TouchableOpacity>
           </View>
         )}
         {props.isLoading ? (

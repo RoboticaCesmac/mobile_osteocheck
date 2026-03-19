@@ -129,7 +129,7 @@ export default function RegisterScreen() {
             <InputComponent
               style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Senha"
-              secureTextEntry
+              isPassword
               value={password}
               onChangeText={setPassword}
               errorText={passwordError}
@@ -145,7 +145,7 @@ export default function RegisterScreen() {
             <InputComponent
               style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Confirmação de senha"
-              secureTextEntry
+              isPassword
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               errorText={confirmPasswordError}

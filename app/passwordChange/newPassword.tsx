@@ -117,7 +117,7 @@ export default function PasswordChangeNewPasswordScreen() {
             <InputComponent
               style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Senha"
-              secureTextEntry
+              isPassword
               value={password}
               onChangeText={setPassword}
             />
@@ -132,7 +132,7 @@ export default function PasswordChangeNewPasswordScreen() {
             <InputComponent
               style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Confirmar senha"
-              secureTextEntry
+              isPassword
               value={confirmPassword}
               onChangeText={setConfirmPassword}
             />

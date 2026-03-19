@@ -119,6 +119,7 @@ export default function LoginScreen() {
             <InputComponent
               style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Senha"
+              isPassword
               value={password}
               onChangeText={setPassword}
               errorText={passwordError}

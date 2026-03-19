@@ -82,6 +82,7 @@ export default function CreateNewPasswordScreen() {
             <InputComponent
               style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Senha"
+              isPassword
             />
           </View>
           <View>
@@ -94,6 +95,7 @@ export default function CreateNewPasswordScreen() {
             <InputComponent
               style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Confirmar senha"
+              isPassword
             />
           </View>
 
