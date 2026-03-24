@@ -64,6 +64,9 @@ export default function QuestionnaireScreen() {
                 setIsFinished(true);
             } else {
                 setQuestion(questionData);
+                if (questionData.order === 0 && questionData.group?.order === 6 && questionData.options?.length > 0) {
+                    setSelectedOptionIds([questionData.options[0].id]);
+                }
             }
 
         } catch (error: any) {
@@ -88,9 +91,6 @@ export default function QuestionnaireScreen() {
         try {
             setSubmitting(true);
 
-
-
-
             const payload = {
                 questionnaireType: "jawAssessment",
                 patientId: Number(patientId),
@@ -105,7 +105,12 @@ export default function QuestionnaireScreen() {
                 setIsFinished(true);
             } else {
                 setQuestion(response.data);
-                setSelectedOptionIds([]);
+                console.log(response.data);
+                if (response.data.order === 0 && response.data.group?.order === 5 && response.data.options?.length > 0) {
+                    setSelectedOptionIds([response.data.options[0].id]);
+                } else {
+                    setSelectedOptionIds([]);
+                }
                 setTextAnswer("");
             }
         } catch (error: any) {
@@ -117,6 +122,15 @@ export default function QuestionnaireScreen() {
 
     const toggleOption = (optionId: number) => {
         if (!question) return;
+
+        if (question.order === 0 && question.group?.order === 6 && question.options && question.options.length > 0) {
+            if (question.type === QuestionType.SINGLE_CHOICE) {
+                return;
+            }
+            if (optionId === question.options[0].id) {
+                return;
+            }
+        }
 
         if (question.type === QuestionType.SINGLE_CHOICE) {
             setSelectedOptionIds([optionId]);
