@@ -1,5 +1,6 @@
 import Container from "@/components/container.component";
 import { Image, StyleSheet, View } from "react-native";
+import { useState } from "react";
 import osteocheckLogo from "@/assets/images/osteocheck-logo.png";
 import colors from "@/constants/colors";
 import { defaultFormStyle } from "@/constants/formStyle";
@@ -12,17 +13,19 @@ import BadgeComponent from "@/components/badge.component";
 
 export default function CreateNewPasswordScreen() {
   const router = useRouter();
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
 
   const onHandleCancelNewPasswordRegistration = () => {
     router.dismissTo("/(auth)/home");
   };
 
   const registerFieldsInfos = [
-    "Mínimo de 8 caracteres",
-    "Uma letra maiúscula",
-    "Uma letra miúscula",
-    "Um número",
-    "Um caracter especial (@, #, %, &, $)",
+    { text: "Mínimo de 8 caracteres", met: password.length >= 8 },
+    { text: "Uma letra maiúscula", met: /[A-Z]/.test(password) },
+    { text: "Uma letra minúscula", met: /[a-z]/.test(password) },
+    { text: "Um número", met: /[0-9]/.test(password) },
+    { text: "Um caracter especial (@, #, %, &, $)", met: /[^A-Za-z0-9]/.test(password) },
   ];
 
   return (
@@ -83,6 +86,8 @@ export default function CreateNewPasswordScreen() {
               style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Senha"
               isPassword
+              value={password}
+              onChangeText={setPassword}
             />
           </View>
           <View>
@@ -96,6 +101,8 @@ export default function CreateNewPasswordScreen() {
               style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Confirmar senha"
               isPassword
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
             />
           </View>
 
@@ -106,12 +113,20 @@ export default function CreateNewPasswordScreen() {
                 style={createNewPasswordStyles.infoBadgeContainer}
               >
                 <BadgeComponent
-                  style={createNewPasswordStyles.infoBadgeComponent}
+                  style={[
+                    createNewPasswordStyles.infoBadgeComponent,
+                    { backgroundColor: info.met ? colors.successBlue : colors.mainGray }
+                  ]}
                   size={10}
                 />
                 <AppText
-                  textProps={{ style: createNewPasswordStyles.whiteText }}
-                  content={info}
+                  textProps={{
+                    style: [
+                      createNewPasswordStyles.whiteText,
+                      { opacity: info.met ? 1 : 0.5 }
+                    ]
+                  }}
+                  content={info.text}
                 />
               </View>
             ))}

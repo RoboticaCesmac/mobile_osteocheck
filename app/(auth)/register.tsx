@@ -14,13 +14,6 @@ import { useContext, useState } from "react";
 import { AppContext } from "@/context/appContext";
 import { NotificationType } from "@/components/notification.component";
 
-const registerFieldsInfos = [
-  "Mínimo de 8 caracteres",
-  "Uma letra maiúscula",
-  "Uma letra miúscula",
-  "Um número",
-  "Um caracter especial (@, #, %, &, $)",
-];
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -36,6 +29,14 @@ export default function RegisterScreen() {
   const [passwordError, setPasswordError] = useState<string[]>();
   const [confirmPasswordError, setConfirmPasswordError] = useState<string[]>();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const registerFieldsInfos = [
+    { text: "Mínimo de 8 caracteres", met: password.length >= 8 },
+    { text: "Uma letra maiúscula", met: /[A-Z]/.test(password) },
+    { text: "Uma letra minúscula", met: /[a-z]/.test(password) },
+    { text: "Um número", met: /[0-9]/.test(password) },
+    { text: "Um caracter especial (@, #, %, &, $)", met: /[^A-Za-z0-9]/.test(password) },
+  ];
 
   const onHandleGoToConfirmationCode = async () => {
     try {
@@ -156,12 +157,20 @@ export default function RegisterScreen() {
             {registerFieldsInfos.map((info, index) => (
               <View key={index} style={registerScreenStyles.infoBadgeContainer}>
                 <BadgeComponent
-                  style={registerScreenStyles.infoBadgeComponent}
+                  style={[
+                    registerScreenStyles.infoBadgeComponent,
+                    { backgroundColor: info.met ? colors.successBlue : colors.mainGray }
+                  ]}
                   size={10}
                 />
                 <AppText
-                  textProps={{ style: registerScreenStyles.whiteText }}
-                  content={info}
+                  textProps={{
+                    style: [
+                      registerScreenStyles.whiteText,
+                      { opacity: info.met ? 1 : 0.5 }
+                    ]
+                  }}
+                  content={info.text}
                 />
               </View>
             ))}
