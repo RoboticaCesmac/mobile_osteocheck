@@ -174,7 +174,7 @@ export default function QuestionnaireScreen() {
                     />
 
                     <ButtonComponent onPress={() => router.back()} style={{ backgroundColor: colors.successBlue, width: '100%', borderRadius: 8 }}>
-                        <AppText content="Voltar para Detalhes" textProps={{ style: { color: colors.mainWhite, fontWeight: "bold" } }} />
+                        <AppText content="Voltar para Detalhes" textProps={{ style: { paddingInline: 20, color: colors.mainWhite, fontWeight: "bold" } }} />
                     </ButtonComponent>
                 </View>
             </View>
