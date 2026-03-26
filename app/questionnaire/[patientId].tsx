@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, TouchableOpacity, ScrollView, TextInput } from "react-native";
+import { View, StyleSheet, TouchableOpacity, ScrollView, TextInput, Linking } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import AppText from "@/components/appText.component";
 import ButtonComponent from "@/components/button.component";
@@ -64,7 +64,7 @@ export default function QuestionnaireScreen() {
                 setIsFinished(true);
             } else {
                 setQuestion(questionData);
-                if (questionData.order === 0 && questionData.group?.order === 6 && questionData.options?.length > 0) {
+                if (questionData.order === 1 && questionData.group?.order === 3 && questionData.options?.length > 0) {
                     setSelectedOptionIds([questionData.options[0].id]);
                 }
             }
@@ -123,7 +123,9 @@ export default function QuestionnaireScreen() {
     const toggleOption = (optionId: number) => {
         if (!question) return;
 
-        if (question.order === 0 && question.group?.order === 6 && question.options && question.options.length > 0) {
+        console.log(question);
+
+        if (question.order === 1 && question.group?.order === 3 && question.options && question.options.length > 0) {
             if (question.type === QuestionType.SINGLE_CHOICE) {
                 return;
             }
@@ -175,6 +177,10 @@ export default function QuestionnaireScreen() {
 
                     <ButtonComponent onPress={() => router.back()} style={{ backgroundColor: colors.successBlue, width: '100%', borderRadius: 8 }}>
                         <AppText content="Voltar para Detalhes" textProps={{ style: { paddingInline: 20, color: colors.mainWhite, fontWeight: "bold" } }} />
+                    </ButtonComponent>
+
+                    <ButtonComponent onPress={() => Linking.openURL("https://educapes.capes.gov.br/handle/capes/1174314")} style={{ backgroundColor: colors.darkBlue, width: '100%', borderRadius: 8, marginTop: 15 }}>
+                        <AppText content="Acessar E-book Guia" textProps={{ style: { paddingInline: 20, color: colors.mainWhite, fontWeight: "bold" } }} />
                     </ButtonComponent>
                 </View>
             </View>

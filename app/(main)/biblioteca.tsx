@@ -6,7 +6,8 @@ import { AppContext, ScreenName } from "@/context/appContext";
 import { AntDesign } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useContext, useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View, Linking } from "react-native";
+import ButtonComponent from "@/components/button.component";
 
 interface FAQItemProps {
   question: string;
@@ -98,6 +99,10 @@ export default function BibliotecaScreen() {
     }, [])
   );
 
+  const openLink = () => {
+    Linking.openURL("https://educapes.capes.gov.br/handle/capes/1174314");
+  };
+
   return (
     <Container>
       <ScrollView contentContainerStyle={styles.container}>
@@ -106,6 +111,20 @@ export default function BibliotecaScreen() {
           size={textSize.big}
           textProps={{ style: { marginBottom: 20, fontWeight: "bold" } }}
         />
+
+        <View style={styles.buttonWrapper}>
+          <ButtonComponent
+            onPress={openLink}
+            style={styles.mainButton}
+          >
+            <AppText
+              content="Acessar E-book Guia"
+              size={textSize.regular}
+              textProps={{ style: { color: colors.mainWhite, fontWeight: "bold" } }}
+            />
+          </ButtonComponent>
+        </View>
+
         {faqs.map((faq, index) => (
           <FAQItem key={index} question={faq.question} answer={faq.answer} />
         ))}
@@ -118,6 +137,15 @@ const styles = StyleSheet.create({
   container: {
     paddingInline: 30,
     paddingBottom: 40,
+  },
+  buttonWrapper: {
+    marginBottom: 20,
+  },
+  mainButton: {
+    backgroundColor: colors.darkBlue,
+    borderColor: colors.darkBlue,
+    borderRadius: 10,
+    height: 60,
   },
   faqContainer: {
     backgroundColor: colors.opaqueBlue,
