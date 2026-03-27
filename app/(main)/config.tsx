@@ -9,10 +9,12 @@ import { useCallback, useContext, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import ButtonComponent from "@/components/button.component";
 import ConfirmModalComponent from "@/components/confirmModal.component";
+import professionalAPI from "@/services/professional";
 
 export default function ConfigScreen() {
     const appContext = useContext(AppContext);
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const router = useRouter();
 
     const onHandleChangePassword = () => {
@@ -25,6 +27,19 @@ export default function ConfigScreen() {
 
     const onHandleClickLogOut = () => {
         setIsLogoutModalOpen(true);
+    }
+
+    const onHandleDeleteAccount = async () => {
+        try {
+            await professionalAPI.deleteById();
+            appContext.handleLogout();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const onHandleClickDeleteAccount = () => {
+        setIsDeleteModalOpen(true);
     }
 
     useFocusEffect(
@@ -92,6 +107,16 @@ export default function ConfigScreen() {
                             textProps={{ style: styles.logoutButtonText }}
                         />
                     </ButtonComponent>
+
+                    <ButtonComponent
+                        style={[styles.logoutButton, { marginTop: 15 }]}
+                        onPress={onHandleClickDeleteAccount}
+                    >
+                        <AppText
+                            content="Deletar Conta"
+                            textProps={{ style: styles.logoutButtonText }}
+                        />
+                    </ButtonComponent>
                 </View>
 
                 <ConfirmModalComponent
@@ -102,6 +127,16 @@ export default function ConfigScreen() {
                     confirmLabel="Sair"
                     onCancel={() => setIsLogoutModalOpen(false)}
                     onConfirm={onHandleLogOut}
+                />
+
+                <ConfirmModalComponent
+                    visible={isDeleteModalOpen}
+                    title="Deletar Conta"
+                    description="Tem certeza que deseja deletar sua conta permanentemente? Esta ação não pode ser desfeita."
+                    cancelLabel="Cancelar"
+                    confirmLabel="Deletar"
+                    onCancel={() => setIsDeleteModalOpen(false)}
+                    onConfirm={onHandleDeleteAccount}
                 />
             </View>
         </Container>

@@ -29,6 +29,6 @@ export default function UserContextProvider({ children }: PropsWithChildren) {
   }
 
   return (
-    <UserContext.Provider value={context}> { children }</UserContext.Provider>
+    <UserContext.Provider value={context}>{children}</UserContext.Provider>
   )
 }

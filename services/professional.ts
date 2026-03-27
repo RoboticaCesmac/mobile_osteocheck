@@ -40,6 +40,10 @@ class ProfessionalAPI extends Api {
     async sendForgotPasswordToken(professionalEmail: string): Promise<ServiceResponse<{ token: string }>> {
         return await this.put('/professional/send/forgot-password-token', { professionalEmail: professionalEmail });
     }
+
+    async deleteById(): Promise<ServiceResponse<null>> {
+        return await this.delete('/professional');
+    }
 }
 
 export default new ProfessionalAPI();

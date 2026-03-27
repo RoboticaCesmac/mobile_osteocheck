@@ -6,7 +6,6 @@ import AppText from "@/components/appText.component";
 import ButtonComponent from "@/components/button.component";
 import { NotificationType } from "@/components/notification.component";
 import colors from "@/constants/colors";
-import textSize from "@/constants/textSize";
 import { AppContext } from "@/context/appContext";
 import QuestionnaireAPI from "@/services/questionnaire";
 import { Question, QuestionType } from "@/domain/question";
@@ -66,6 +65,8 @@ export default function QuestionnaireScreen() {
                 setQuestion(questionData);
                 if (questionData.order === 1 && questionData.group?.order === 3 && questionData.options?.length > 0) {
                     setSelectedOptionIds([questionData.options[0].id]);
+                } else if (questionData.order === 0 && questionData.group?.order === 5 && questionData.options?.length > 0) {
+                    setSelectedOptionIds([questionData.options[0].id]);
                 }
             }
 
@@ -105,8 +106,9 @@ export default function QuestionnaireScreen() {
                 setIsFinished(true);
             } else {
                 setQuestion(response.data);
-                console.log(response.data);
                 if (response.data.order === 0 && response.data.group?.order === 5 && response.data.options?.length > 0) {
+                    setSelectedOptionIds([response.data.options[0].id]);
+                } else if (response.data.order === 1 && response.data.group?.order === 3 && response.data.options?.length > 0) {
                     setSelectedOptionIds([response.data.options[0].id]);
                 } else {
                     setSelectedOptionIds([]);
@@ -123,14 +125,17 @@ export default function QuestionnaireScreen() {
     const toggleOption = (optionId: number) => {
         if (!question) return;
 
-        console.log(question);
-
-        if (question.order === 1 && question.group?.order === 3 && question.options && question.options.length > 0) {
-            if (question.type === QuestionType.SINGLE_CHOICE) {
-                return;
-            }
-            if (optionId === question.options[0].id) {
-                return;
+        if (
+            (question.order === 1 && question.group?.order === 3) ||
+            (question.order === 0 && question.group?.order === 5)
+        ) {
+            if (question.options && question.options.length > 0) {
+                if (question.type === QuestionType.SINGLE_CHOICE) {
+                    return;
+                }
+                if (optionId === question.options[0].id) {
+                    return;
+                }
             }
         }
 

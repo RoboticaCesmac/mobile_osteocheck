@@ -4,7 +4,7 @@
     "slug": "osteocheck",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/osteocheck-short-logo.png",
     "scheme": "osteocheck",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -30,12 +30,12 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/osteocheck-blue-bg-logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#0F365A",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#0F365A"
           }
         }
       ]

@@ -56,7 +56,7 @@ export default function RegisterScreen() {
       router.push({ pathname: '/(auth)/registerConfirmationCode', params: { email } });
     } catch (error: any) {
       if (!error?.response?.data?.errors) {
-        appContext.handleSetNotification(NotificationType.Error, error?.response?.data?.message ?? 'Erro ao cadastrar');
+        appContext.handleSetNotification(NotificationType.Error, error?.response?.data?.error ?? 'Erro ao cadastrar');
       }
       setNameError(error?.response?.data?.errors?.name);
       setEmailError(error?.response?.data?.errors?.email);
