@@ -37,7 +37,6 @@ export default function RegisterConfirmationCodeScreen() {
       appContext.handleSetNotification(NotificationType.Success, "Conta ativada com sucesso");
       router.replace('/(auth)/login');
     } catch (error: any) {
-      console.log(error.response.data)
       if (!error?.response?.data?.errors) {
         appContext.handleSetNotification(NotificationType.Error, error?.response?.data?.message ?? "Erro ao confirmar código");
       }

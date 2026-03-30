@@ -40,13 +40,9 @@ export default function LoginScreen() {
   }
 
   async function verifyProfile() {
-    try {
-      const user = await AuthAPI.profile();
-      userContext.handleSetUser(user.data);
-      onHandleGoToMainHomeScreen();
-    } catch (error: any) {
-      console.log(error);
-    }
+    const user = await AuthAPI.profile();
+    userContext.handleSetUser(user.data);
+    onHandleGoToMainHomeScreen();
   }
 
   const onHandleLogin = async () => {

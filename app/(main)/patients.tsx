@@ -14,39 +14,6 @@ import ProfessionalAPI from "@/services/professional";
 import { NotificationType } from "@/components/notification.component";
 import FullScreenLoading from "@/components/fullScreenLoading.component";
 
-const MOCK_PATIENTS: Patient[] = [
-    {
-        id: 1,
-        name: "Leila Jacques",
-        cpf: "111.222.333-44",
-        dateOfBirth: new Date("1985-04-12"),
-        gender: "f" as any,
-        createdAt: new Date("2025-10-18"),
-        updatedAt: new Date("2025-10-18"),
-        deletedAt: null as any,
-    },
-    {
-        id: 2,
-        name: "Carlos Andrade",
-        cpf: "123.456.789-00",
-        dateOfBirth: new Date("1980-09-05"),
-        gender: "m" as any,
-        createdAt: new Date("2025-10-15"),
-        updatedAt: new Date("2025-10-15"),
-        deletedAt: null as any,
-    },
-    {
-        id: 3,
-        name: "Maria Souza",
-        cpf: "987.654.321-11",
-        dateOfBirth: new Date("1995-02-28"),
-        gender: "f" as any,
-        createdAt: new Date("2025-10-10"),
-        updatedAt: new Date("2025-10-10"),
-        deletedAt: null as any,
-    },
-];
-
 const AVATAR_COLORS: Record<string, string> = {
     LJ: colors.successBlue,
     CA: colors.successBlue,

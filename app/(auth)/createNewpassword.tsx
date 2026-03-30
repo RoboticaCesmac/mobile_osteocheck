@@ -54,7 +54,6 @@ export default function CreateNewPasswordScreen() {
       appContext.handleSetNotification(NotificationType.Success, "Senha redefinida com sucesso.");
       router.replace("/(auth)/login");
     } catch (error: any) {
-      console.log(error.response?.data);
       appContext.handleSetNotification(NotificationType.Error, error?.response?.data?.message ?? "Erro ao redefinir a senha.");
     } finally {
       setLoading(false);

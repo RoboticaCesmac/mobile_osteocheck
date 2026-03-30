@@ -166,8 +166,8 @@ export default function HistoricoScreen() {
                 setHasMore(response.meta.page < response.meta.totalPages);
                 setPage(response.meta.page);
             }
-        } catch (error) {
-            console.error("Error fetching questionnaire responses:", error);
+        } catch (error: any) {
+            appContext.handleSetNotification(NotificationType.Error, error?.response?.data?.message ?? "Erro ao buscar histórico.");
         } finally {
             setLoading(false);
         }

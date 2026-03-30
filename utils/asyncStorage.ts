@@ -5,7 +5,7 @@ export async function storeData(key: string, data: any): Promise<void> {
     if (!key || typeof data === 'undefined') throw new Error("erro ao tentar guardar dado");
     await AsyncStorage.setItem(key, JSON.stringify(data));
   } catch (err) {
-    console.error(err);
+    throw err
   }
 }
 
@@ -16,7 +16,6 @@ export async function getStoreData<T>(key: string): Promise<T | null> {
     if (!item) return null;
     return JSON.parse(item) as T
   } catch (err) {
-    console.error(err);
     throw err;
   }
 }

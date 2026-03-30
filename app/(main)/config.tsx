@@ -10,6 +10,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import ButtonComponent from "@/components/button.component";
 import ConfirmModalComponent from "@/components/confirmModal.component";
 import professionalAPI from "@/services/professional";
+import { NotificationType } from "@/components/notification.component";
 
 export default function ConfigScreen() {
     const appContext = useContext(AppContext);
@@ -33,8 +34,8 @@ export default function ConfigScreen() {
         try {
             await professionalAPI.deleteById();
             appContext.handleLogout();
-        } catch (error) {
-            console.error(error);
+        } catch (error: any) {
+            appContext.handleSetNotification(NotificationType.Error, error?.response?.data?.message ?? "Erro ao deletar conta.");
         }
     }
 

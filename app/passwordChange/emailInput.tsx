@@ -35,7 +35,6 @@ export default function PasswordChangeEmailInputScreen() {
     try {
       setIsLoading(true);
       const a = await professionalApi.sendForgotPasswordToken(email);
-      console.log(a)
       router.push({ pathname: "/passwordChange/codeInput", params: { email } });
     } catch (error: any) {
       appContext.handleSetNotification(NotificationType.Error, error?.response?.data?.error || "Erro ao enviar código.");
