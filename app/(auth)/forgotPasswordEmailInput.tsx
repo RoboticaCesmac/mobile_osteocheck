@@ -8,12 +8,38 @@ import textSize from "@/constants/textSize";
 import { StyleSheet, View, Image } from "react-native";
 import osteocheckLogo from "@/assets/images/osteocheck-logo.png";
 import { useRouter } from "expo-router";
+import professional from "@/services/professional";
+import { useContext, useState } from "react";
+import { AppContext } from "@/context/appContext";
+import { NotificationType } from "@/components/notification.component";
 
 export default function ForgotPasswordEmailInputScreen() {
-  const router = useRouter();
+  const [email, setEmail] = useState<string>();
+  const [emailInputError, setEmailInputError] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const onHandleGoToCreateNewPassword = () => {
-    router.push("/(auth)/createNewpassword");
+  const router = useRouter();
+  const appContext = useContext(AppContext);
+
+
+
+  const onHandleSendForgotPasswordToken = async () => {
+    if (!email) {
+      appContext.handleSetNotification(NotificationType.Warning, 'É preciso inserir o e-mail para enviar o código de confirmação para mudar a senha.');
+      return;
+    }
+    try {
+      setIsLoading(true);
+      await professional.sendForgotPasswordToken(email);
+      router.push({
+        pathname: "/(auth)/forgotPasswordConfirmationCode",
+        params: { email }
+      });
+    } catch (err: any) {
+      setEmailInputError(err?.response?.data?.errors?.professionalEmail);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -72,6 +98,8 @@ export default function ForgotPasswordEmailInputScreen() {
             <InputComponent
               style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="exemplo@hotmail.com"
+              errorText={emailInputError}
+              onChangeText={setEmail}
             />
           </View>
 
@@ -79,7 +107,8 @@ export default function ForgotPasswordEmailInputScreen() {
             style={{
               borderColor: colors.mainWhite,
             }}
-            onPress={onHandleGoToCreateNewPassword}
+            loading={isLoading}
+            onPress={onHandleSendForgotPasswordToken}
           >
             <AppText
               textProps={{ style: { margin: "auto", color: colors.mainWhite } }}

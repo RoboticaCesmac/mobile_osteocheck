@@ -1,6 +1,6 @@
 import Container from "@/components/container.component";
 import { Image, StyleSheet, View } from "react-native";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import osteocheckLogo from "@/assets/images/osteocheck-logo.png";
 import colors from "@/constants/colors";
 import { defaultFormStyle } from "@/constants/formStyle";
@@ -8,13 +8,20 @@ import AppText from "@/components/appText.component";
 import textSize from "@/constants/textSize";
 import InputComponent from "@/components/input.component";
 import ButtonComponent from "@/components/button.component";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import BadgeComponent from "@/components/badge.component";
+import { AppContext } from "@/context/appContext";
+import { NotificationType } from "@/components/notification.component";
+import professional from "@/services/professional";
 
 export default function CreateNewPasswordScreen() {
   const router = useRouter();
+  const { email } = useLocalSearchParams<{ email: string }>();
+  const appContext = useContext(AppContext);
+
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const onHandleCancelNewPasswordRegistration = () => {
     router.dismissTo("/(auth)/home");
@@ -27,6 +34,33 @@ export default function CreateNewPasswordScreen() {
     { text: "Um número", met: /[0-9]/.test(password) },
     { text: "Um caracter especial (@, #, %, &, $)", met: /[^A-Za-z0-9]/.test(password) },
   ];
+
+  const onHandleSaveNewPassword = async () => {
+    const allRequirementsMet = registerFieldsInfos.every((info) => info.met);
+
+    if (!allRequirementsMet) {
+      appContext.handleSetNotification(NotificationType.Warning, "A senha não atende a todos os requisitos.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      appContext.handleSetNotification(NotificationType.Warning, "As senhas não coincidem.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await professional.changePassword({ email, password });
+      appContext.handleSetNotification(NotificationType.Success, "Senha redefinida com sucesso.");
+      router.replace("/(auth)/login");
+    } catch (error: any) {
+      console.log(error.response?.data);
+      appContext.handleSetNotification(NotificationType.Error, error?.response?.data?.message ?? "Erro ao redefinir a senha.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <Container>
@@ -157,6 +191,8 @@ export default function CreateNewPasswordScreen() {
               />
             </ButtonComponent>
             <ButtonComponent
+              loading={loading}
+              onPress={onHandleSaveNewPassword}
               style={{
                 borderColor: colors.mainWhite,
                 marginTop: 15,

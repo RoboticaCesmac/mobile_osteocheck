@@ -1,0 +1,121 @@
+import Container from "@/components/container.component";
+import colors from "@/constants/colors";
+import textSize from "@/constants/textSize";
+import { Image, StyleSheet, View } from "react-native";
+import osteocheckLogo from "@/assets/images/osteocheck-logo.png";
+import AppText from "@/components/appText.component";
+import ButtonComponent from "@/components/button.component";
+import OTPTextInputComponent from "@/components/otpTextInput.component";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import professional from "@/services/professional";
+import { useContext, useState } from "react";
+import { AppContext } from "@/context/appContext";
+import { NotificationType } from "@/components/notification.component";
+
+export default function ForgotPasswordConfirmationCodeScreen() {
+  const router = useRouter();
+  const { email } = useLocalSearchParams<{ email: string }>();
+  const appContext = useContext(AppContext);
+
+  const [code, setCode] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const onHandleConfirmCode = async () => {
+    if (!code || code.length !== 5) {
+      appContext.handleSetNotification(NotificationType.Error, "Por favor, insira um código válido de 5 dígitos.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await professional.confirmForgotPasswordToken({
+        email: email,
+        forgotPasswordToken: code,
+      });
+
+      appContext.handleSetNotification(NotificationType.Success, "Código confirmado com sucesso.");
+      router.push({
+        pathname: "/(auth)/createNewpassword",
+        params: { email }
+      });
+    } catch (error: any) {
+      console.log(error.response?.data);
+      if (!error?.response?.data?.errors) {
+        appContext.handleSetNotification(NotificationType.Error, error?.response?.data?.message ?? "Erro ao confirmar código.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Container>
+      <Image
+        source={osteocheckLogo}
+        style={{
+          width: 170,
+          height: 60,
+          margin: "auto",
+        }}
+      />
+      <View style={styles.infoContainer}>
+        <AppText
+          textProps={{
+            style: {
+              color: colors.mainWhite,
+              textAlign: "right",
+              fontSize: textSize.big,
+              fontWeight: 'bold'
+            },
+          }}
+          content="Esqueci a senha"
+        />
+
+        <AppText
+          textProps={{
+            style: { fontSize: textSize.big, color: colors.mainWhite, marginTop: 20 }
+          }}
+          content="Confirme seu código"
+        />
+
+        <AppText
+          textProps={{
+            style: { fontSize: textSize.regular, marginTop: 40, marginBottom: 20, color: colors.mainWhite }
+          }}
+          content="Enviamos um e-mail com um código de 5 caracteres. Para redefinir sua senha, digite o código abaixo."
+        />
+
+        <OTPTextInputComponent onChangeText={setCode} />
+
+        <ButtonComponent
+          loading={loading}
+          onPress={onHandleConfirmCode}
+          style={{
+            borderColor: colors.mainWhite,
+            marginTop: 15,
+          }}
+        >
+          <AppText
+            textProps={{
+              style: { margin: "auto", color: colors.mainWhite },
+            }}
+            content="Confirmar Código"
+          />
+        </ButtonComponent>
+      </View>
+    </Container>
+  );
+}
+
+const styles = StyleSheet.create({
+  whiteText: {
+    color: colors.mainWhite,
+  },
+  infoContainer: {
+    backgroundColor: colors.darkBlue,
+    padding: 30,
+    paddingBottom: 80,
+    borderTopRightRadius: 30,
+    borderTopLeftRadius: 30,
+  },
+});
