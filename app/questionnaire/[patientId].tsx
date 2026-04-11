@@ -1,7 +1,9 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, TouchableOpacity, ScrollView, TextInput, Linking } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+import { View, StyleSheet, TouchableOpacity, ScrollView, TextInput, Linking, ActivityIndicator } from "react-native";
+import { AntDesign, Feather } from "@expo/vector-icons";
+import * as Sharing from "expo-sharing";
+import { File, Paths } from "expo-file-system/next";
 import AppText from "@/components/appText.component";
 import ButtonComponent from "@/components/button.component";
 import { NotificationType } from "@/components/notification.component";
@@ -11,6 +13,7 @@ import QuestionnaireAPI from "@/services/questionnaire";
 import { Question, QuestionType } from "@/domain/question";
 import FullScreenLoading from "@/components/fullScreenLoading.component";
 import Container from "@/components/container.component";
+import PatientAPI from "@/services/patient";
 
 export default function QuestionnaireScreen() {
     const { patientId } = useLocalSearchParams();
@@ -24,6 +27,8 @@ export default function QuestionnaireScreen() {
 
     const [selectedOptionIds, setSelectedOptionIds] = useState<number[]>([]);
     const [textAnswer, setTextAnswer] = useState<string>("");
+    const [questionnaireId, setQuestionnaireId] = useState<number | null>(null);
+    const [pdfLoading, setPdfLoading] = useState<boolean>(false);
 
     const [isFinished, setIsFinished] = useState<boolean>(false);
 
@@ -60,8 +65,20 @@ export default function QuestionnaireScreen() {
             const { data: questionData } = await QuestionnaireAPI.nextQuestion(nextQuestionPayload);
 
             if (questionData === null) {
+                try {
+                    const patientResponse = await PatientAPI.findById(Number(patientId));
+                    if (patientResponse.data && patientResponse.data.questionnaireResponses) {
+                        const lastResponse = patientResponse.data.questionnaireResponses[patientResponse.data.questionnaireResponses.length - 1];
+                        if (lastResponse) {
+                            setQuestionnaireId(lastResponse.id);
+                        }
+                    }
+                } catch (e) {
+                    setQuestionnaireId(progressInfo.questionnaireId || null);
+                }
                 setIsFinished(true);
             } else {
+                setQuestionnaireId(progressInfo.questionnaireId || null);
                 setQuestion(questionData);
                 if (questionData.order === 1 && questionData.group?.order === 3 && questionData.options?.length > 0) {
                     setSelectedOptionIds([questionData.options[0].id]);
@@ -103,6 +120,23 @@ export default function QuestionnaireScreen() {
 
             if (response.data === null) {
                 setQuestion(null);
+
+                try {
+                    const patientResponse = await PatientAPI.findById(Number(patientId));
+                    if (patientResponse.data && patientResponse.data.questionnaireResponses) {
+                        const lastResponse = patientResponse.data.questionnaireResponses[patientResponse.data.questionnaireResponses.length - 1];
+                        if (lastResponse) {
+                            setQuestionnaireId(lastResponse.id);
+                        }
+                    }
+                } catch (e) {
+                    const { data: progressInfo } = await QuestionnaireAPI.getQuestionnaireProgress({
+                        questionnaireType: "jawAssessment",
+                        patientId: Number(patientId),
+                    });
+                    setQuestionnaireId(progressInfo.questionnaireId || null);
+                }
+
                 setIsFinished(true);
             } else {
                 setQuestion(response.data);
@@ -119,6 +153,50 @@ export default function QuestionnaireScreen() {
             appContext.handleSetNotification(NotificationType.Error, error.message || "Erro ao enviar resposta");
         } finally {
             setSubmitting(false);
+        }
+    };
+
+    const handleGeneratePdf = async () => {
+        if (!questionnaireId) {
+            appContext.handleSetNotification(NotificationType.Warning, "ID da avaliação não encontrado.");
+            return;
+        }
+
+        try {
+            setPdfLoading(true);
+            const blob = await QuestionnaireAPI.generatePdf(questionnaireId);
+
+            const base64Data = await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const dataUrl = reader.result as string;
+                    const base64 = dataUrl.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+
+            const pdfFile = new File(Paths.cache, `avaliacao_${questionnaireId}.pdf`);
+            const binaryString = atob(base64Data);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            pdfFile.write(bytes);
+
+            await Sharing.shareAsync(pdfFile.uri, {
+                mimeType: 'application/pdf',
+                dialogTitle: `Avaliação #${questionnaireId}`,
+                UTI: 'com.adobe.pdf',
+            });
+        } catch (error: any) {
+            appContext.handleSetNotification(
+                NotificationType.Error,
+                error.message || "Erro ao gerar PDF"
+            );
+        } finally {
+            setPdfLoading(false);
         }
     };
 
@@ -173,20 +251,43 @@ export default function QuestionnaireScreen() {
                     <AntDesign name="check-circle" size={64} color={colors.successBlue} style={{ marginBottom: 20 }} />
                     <AppText
                         content="Questionário Finalizado"
-                        textProps={{ style: { fontSize: 20, fontWeight: "bold", color: colors.darkBlue, marginBottom: 10 } }}
+                        textProps={{ style: { fontSize: 22, fontWeight: "bold", color: colors.darkBlue, marginBottom: 10 } }}
                     />
                     <AppText
                         content="A avaliação deste paciente foi concluída com sucesso."
-                        textProps={{ style: { fontSize: 16, color: colors.mainGray, textAlign: 'center', marginBottom: 30 } }}
+                        textProps={{ style: { fontSize: 16, color: colors.mainGray, textAlign: 'center', marginBottom: 40 } }}
                     />
 
-                    <ButtonComponent onPress={() => router.back()} style={{ backgroundColor: colors.successBlue, width: '100%', borderRadius: 8 }}>
-                        <AppText content="Voltar para Detalhes" textProps={{ style: { paddingInline: 20, color: colors.mainWhite, fontWeight: "bold" } }} />
-                    </ButtonComponent>
+                    <View style={styles.finishedButtonsContainer}>
+                        <ButtonComponent
+                            onPress={handleGeneratePdf}
+                            disabled={pdfLoading}
+                            style={[styles.primaryFinishedButton, { opacity: pdfLoading ? 0.7 : 1 }]}
+                        >
+                            {pdfLoading ? (
+                                <ActivityIndicator color={colors.mainWhite} />
+                            ) : (
+                                <>
+                                    <Feather name="share" size={20} color={colors.mainWhite} />
+                                    <AppText content="Gerar & Compartilhar PDF" textProps={{ style: styles.primaryButtonText }} />
+                                </>
+                            )}
+                        </ButtonComponent>
 
-                    <ButtonComponent onPress={() => Linking.openURL("https://educapes.capes.gov.br/handle/capes/1174314")} style={{ backgroundColor: colors.darkBlue, width: '100%', borderRadius: 8, marginTop: 15 }}>
-                        <AppText content="Acessar E-book Guia" textProps={{ style: { paddingInline: 20, color: colors.mainWhite, fontWeight: "bold" } }} />
-                    </ButtonComponent>
+                        <ButtonComponent
+                            onPress={() => router.back()}
+                            style={{ backgroundColor: colors.successBlue, width: '100%', borderRadius: 12, height: 50, justifyContent: 'center' }}
+                        >
+                            <AppText content="Voltar para Detalhes" textProps={{ style: { color: colors.mainWhite, fontWeight: "bold", textAlign: 'center' } }} />
+                        </ButtonComponent>
+
+                        <ButtonComponent
+                            onPress={() => Linking.openURL("https://educapes.capes.gov.br/handle/capes/1174314")}
+                            style={{ backgroundColor: colors.darkBlue, width: '100%', borderRadius: 12, height: 50, justifyContent: 'center' }}
+                        >
+                            <AppText content="Acessar E-book Guia" textProps={{ style: { color: colors.mainWhite, fontWeight: "bold", textAlign: 'center' } }} />
+                        </ButtonComponent>
+                    </View>
                 </View>
             </View>
         );
@@ -408,6 +509,30 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        padding: 40,
+        padding: 30,
+    },
+    finishedButtonsContainer: {
+        width: "100%",
+        gap: 15,
+    },
+    primaryFinishedButton: {
+        backgroundColor: colors.successBlue,
+        width: "100%",
+        borderRadius: 12,
+        height: 56,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 10,
+        elevation: 4,
+        shadowColor: colors.successBlue,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+    },
+    primaryButtonText: {
+        color: colors.mainWhite,
+        fontWeight: "bold",
+        fontSize: 18,
     }
 });
