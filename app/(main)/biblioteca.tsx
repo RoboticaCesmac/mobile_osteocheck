@@ -1,4 +1,5 @@
 import AppText from "@/components/appText.component";
+import ButtonComponent from "@/components/button.component";
 import Container from "@/components/container.component";
 import colors from "@/constants/colors";
 import textSize from "@/constants/textSize";
@@ -6,8 +7,7 @@ import { AppContext, ScreenName } from "@/context/appContext";
 import { AntDesign } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useContext, useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View, Linking } from "react-native";
-import ButtonComponent from "@/components/button.component";
+import { Linking, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface FAQItemProps {
   question: string;
@@ -135,6 +135,7 @@ export default function BibliotecaScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    
     paddingInline: 30,
     paddingBottom: 40,
   },

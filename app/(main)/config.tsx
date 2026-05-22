@@ -1,16 +1,16 @@
 import AppText from "@/components/appText.component";
+import ButtonComponent from "@/components/button.component";
+import ConfirmModalComponent from "@/components/confirmModal.component";
 import Container from "@/components/container.component";
+import { NotificationType } from "@/components/notification.component";
 import colors from "@/constants/colors";
 import textSize from "@/constants/textSize";
 import { AppContext, ScreenName } from "@/context/appContext";
+import professionalAPI from "@/services/professional";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useContext, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import ButtonComponent from "@/components/button.component";
-import ConfirmModalComponent from "@/components/confirmModal.component";
-import professionalAPI from "@/services/professional";
-import { NotificationType } from "@/components/notification.component";
 
 export default function ConfigScreen() {
     const appContext = useContext(AppContext);
@@ -73,13 +73,6 @@ export default function ConfigScreen() {
                     textProps={{ style: [styles.sectionTitle, { marginTop: 30 }] }}
                 />
                 <View style={styles.sectionContainer}>
-                    <TouchableOpacity style={styles.listItem}>
-                        <View style={styles.listItemLeft}>
-                            <Feather name="info" size={20} color={colors.mainBlack} />
-                            <AppText content="Sobre o Aplicativo" textProps={{ style: styles.listItemText }} />
-                        </View>
-                        <AntDesign name="right" size={16} color={colors.successBlue} />
-                    </TouchableOpacity>
                     <View style={styles.divider} />
                     <View style={styles.listItem}>
                         <View style={styles.listItemLeft}>
@@ -94,7 +87,7 @@ export default function ConfigScreen() {
                             <Feather name="mail" size={20} color={colors.mainBlack} />
                             <AppText content="Suporte" textProps={{ style: styles.listItemText }} />
                         </View>
-                        <AppText content="osteocheck@cesmac.edu.br" textProps={{ style: [styles.listItemText, { fontSize: 13 }] }} />
+                        <AppText content="roboticacesmac@gmail.com" textProps={{ style: [styles.listItemText, { fontSize: 13 }] }} />
                     </View>
                 </View>
 

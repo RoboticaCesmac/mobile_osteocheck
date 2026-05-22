@@ -1,4 +1,3 @@
-import colors from "@/constants/colors";
 import React from "react";
 import { StyleSheet } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -21,6 +20,6 @@ const containerStyle = StyleSheet.create({
   container: {
     paddingTop: 70,
     flexGrow: 1,
-    backgroundColor: colors.mainWhite,
+    backgroundColor: "#fff",
   },
 });

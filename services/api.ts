@@ -1,5 +1,5 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { getStoreData } from '@/utils/asyncStorage';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
 export type ServiceResponse<T> = {
   data: T;
@@ -14,7 +14,7 @@ export class Api {
   constructor() {
     this.http = axios.create({
       timeout: 30000,
-      baseURL: 'http://192.168.0.6:3000/api',
+      baseURL: 'https://api-osteocheck.citeccesmac.com.br/api/',
       responseType: 'json',
       headers: {
         'Content-Type': 'application/json',

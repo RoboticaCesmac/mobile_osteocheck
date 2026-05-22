@@ -1,18 +1,18 @@
+import osteocheckLogo from "@/assets/images/osteocheck-logo.png";
+import AppText from "@/components/appText.component";
+import BadgeComponent from "@/components/badge.component";
+import ButtonComponent from "@/components/button.component";
 import Container from "@/components/container.component";
+import InputComponent from "@/components/input.component";
+import { NotificationType } from "@/components/notification.component";
 import colors from "@/constants/colors";
 import { defaultFormStyle } from "@/constants/formStyle";
 import textSize from "@/constants/textSize";
-import { Image, StyleSheet, View } from "react-native";
-import osteocheckLogo from "@/assets/images/osteocheck-logo.png";
-import InputComponent from "@/components/input.component";
-import AppText from "@/components/appText.component";
-import ButtonComponent from "@/components/button.component";
-import BadgeComponent from "@/components/badge.component";
-import { useRouter } from "expo-router";
-import AuthAPI from "@/services/auth";
-import { useContext, useState } from "react";
 import { AppContext } from "@/context/appContext";
-import { NotificationType } from "@/components/notification.component";
+import AuthAPI from "@/services/auth";
+import { useRouter } from "expo-router";
+import { useContext, useState } from "react";
+import { Image, StyleSheet, View } from "react-native";
 
 
 export default function RegisterScreen() {
@@ -98,7 +98,7 @@ export default function RegisterScreen() {
               }}
             />
             <InputComponent
-              style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
+              style={{ backgroundColor: colors.mainWhite, borderRadius: 10 , color: "#000"}}
               placeholder="Nome completo"
               value={name}
               onChangeText={setName}
@@ -113,7 +113,7 @@ export default function RegisterScreen() {
               }}
             />
             <InputComponent
-              style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
+              style={{ backgroundColor: colors.mainWhite, borderRadius: 10 , color: "#000"}}
               placeholder="exemplo@hotmail.com"
               value={email}
               onChangeText={setEmail}
@@ -128,7 +128,7 @@ export default function RegisterScreen() {
               }}
             />
             <InputComponent
-              style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
+              style={{ backgroundColor: colors.mainWhite, borderRadius: 10 , color: "#000"}}
               placeholder="Senha"
               isPassword
               value={password}
@@ -144,7 +144,7 @@ export default function RegisterScreen() {
               }}
             />
             <InputComponent
-              style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
+              style={{ backgroundColor: colors.mainWhite, borderRadius: 10 , color: "#000"}}
               placeholder="Confirmação de senha"
               isPassword
               value={confirmPassword}
