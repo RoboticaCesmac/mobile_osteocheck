@@ -8,7 +8,7 @@ export enum PatientsGender {
 export interface Patient {
     id: number;
     name: string;
-    cpf: string;
+    identifier: string;
     dateOfBirth: Date;
     gender: PatientsGender;
     questionnaireResponses: QuestionnaireResponse[];

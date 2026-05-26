@@ -74,16 +74,27 @@ export default function HomeScreen() {
         <AppText content={"As recomendações seguem os critérios da "} />,
         <AppText
           textProps={{ style: { color: colors.opaqueYellow } }}
-          content={"AAOMS (2022) "}
+          content={"AAOMS (2022)"}
         />,
-        <AppText content={"e do consenso "} />,
+        <AppText content={", do consenso "} />,
         <AppText
           textProps={{ style: { color: colors.opaqueYellow } }}
           content={"MASCC/ISOO/ASCO (2019), "}
         />,
         <AppText
           content={
-            " indicando condutas preventivas, terapêuticas e encaminhamentos padronizados."
+            "e do conseso"
+          }
+        />,
+        <AppText
+          textProps={{ style: { color: colors.opaqueYellow } }}
+          content={
+            " SBEM/Sobep/Abrasso (2020),"
+          }
+        />,
+        <AppText
+          content={
+            " recomendando condutas preventivas, terapêuticas e encaminhamentos padronizados."
           }
         />,
       ]}

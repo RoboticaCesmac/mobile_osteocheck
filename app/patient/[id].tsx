@@ -154,7 +154,7 @@ export default function PatientDetailsScreen() {
                         </View>
                     </View>
                     <AppText
-                        content={patient.name}
+                        content={`${patient.name}#${patient.identifier.toUpperCase()}`}
                         textProps={{
                             style: { color: colors.mainWhite, fontSize: 18, fontWeight: "bold", marginTop: 12 },
                         }}
@@ -186,8 +186,8 @@ export default function PatientDetailsScreen() {
                         <AppText content={formattedGender} textProps={{ style: styles.infoValue }} />
                     </View>
                     <View style={styles.infoRow}>
-                        <AppText content="CPF" textProps={{ style: styles.infoLabel }} />
-                        <AppText content={patient.cpf} textProps={{ style: styles.infoValue }} />
+                        <AppText content="Identificador" textProps={{ style: styles.infoLabel }} />
+                        <AppText content={patient.identifier} textProps={{ style: styles.infoValue }} />
                     </View>
                 </View>
 

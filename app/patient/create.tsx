@@ -16,22 +16,12 @@ import AuthAPI from "@/services/auth";
 import { PatientsGender } from "@/domain/patient";
 import { AntDesign } from "@expo/vector-icons";
 
-const formatCPF = (value: string) => {
-    const numericValue = value.replace(/\D/g, "");
-    if (numericValue.length <= 3) return numericValue;
-    if (numericValue.length <= 6) return `${numericValue.slice(0, 3)}.${numericValue.slice(3)}`;
-    if (numericValue.length <= 9) return `${numericValue.slice(0, 3)}.${numericValue.slice(3, 6)}.${numericValue.slice(6)}`;
-    return `${numericValue.slice(0, 3)}.${numericValue.slice(3, 6)}.${numericValue.slice(6, 9)}-${numericValue.slice(9, 11)}`;
-};
-
 export default function CreatePatientScreen() {
     const [initials, setInitials] = useState("");
-    const [cpf, setCpf] = useState("");
     const [dateOfBirth, setDateOfBirth] = useState<Date>(new Date(0));
     const [gender, setGender] = useState<number[]>([]);
     const [loading, setLoading] = useState(false);
     const [initialsError, setInitialsError] = useState<string[]>();
-    const [cpfError, setCpfError] = useState<string[]>();
     const [dateError, setDateError] = useState<string>();
     const [genderError, setGenderError] = useState<string[]>();
 
@@ -49,13 +39,8 @@ export default function CreatePatientScreen() {
         { label: "Feminino", value: "f".charCodeAt(0) },
     ];
 
-    const handleCpfChange = (text: string) => {
-        setCpf(formatCPF(text));
-    };
-
     const handleCreatePatient = async () => {
         setInitialsError(undefined);
-        setCpfError(undefined);
         setDateError(undefined);
         setGenderError(undefined);
 
@@ -63,11 +48,6 @@ export default function CreatePatientScreen() {
 
         if (!initials.trim()) {
             setInitialsError(["A identificação é obrigatória."]);
-            hasError = true;
-        }
-
-        if (!cpf.trim() || cpf.length !== 14) {
-            setCpfError(["CPF inválido."]);
             hasError = true;
         }
 
@@ -94,7 +74,6 @@ export default function CreatePatientScreen() {
             const response = await PatientAPI.create({
                 professionalId,
                 name: initials,
-                cpf: cpf.replace(/\D/g, ""),
                 dateOfBirth,
                 gender: selectedGenderValue,
             });
@@ -107,7 +86,6 @@ export default function CreatePatientScreen() {
             appContext.handleSetNotification(NotificationType.Error, error.message || "Erro ao cadastrar paciente.");
             if (error?.response?.data?.errors) {
                 setInitialsError(error.response.data.errors.name);
-                setCpfError(error.response.data.errors.cpf);
                 setGenderError(error.response.data.errors.gender);
             }
         } finally {
@@ -141,21 +119,6 @@ export default function CreatePatientScreen() {
                         onChangeText={setInitials}
                         errorText={initialsError}
                         maxLength={100}
-                    />
-                </View>
-
-                <View style={styles.inputGroup}>
-                    <AppText
-                        content="CPF"
-                        textProps={{ style: styles.label }}
-                    />
-                    <InputComponent
-                        placeholder="XXX.XXX.XXX-XX"
-                        value={cpf}
-                        onChangeText={handleCpfChange}
-                        errorText={cpfError}
-                        keyboardType="numeric"
-                        maxLength={14}
                     />
                 </View>
 

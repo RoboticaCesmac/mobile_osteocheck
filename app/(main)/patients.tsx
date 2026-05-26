@@ -65,7 +65,7 @@ function PatientCard({ patient }: PatientCardProps) {
                     textProps={{ style: styles.cardName }}
                 />
                 <AppText
-                    content={`ID #${patient.id}`}
+                    content={`Identificador: #${patient.identifier.toUpperCase()}`}
                     textProps={{ style: styles.cardSubtitle }}
                 />
                 <View style={styles.cardDateRow}>

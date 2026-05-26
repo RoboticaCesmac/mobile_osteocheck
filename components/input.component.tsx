@@ -1,10 +1,10 @@
-import Colors from "@/constants/colors";
 import TextSize from "@/constants/textSize";
+import { StyleSheet, TextInput, TextInputProps, View, TouchableOpacity } from "react-native";
+import AppText from "./appText.component";
+import Colors from "@/constants/colors";
+import { ActivityIndicator } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { StyleSheet, TextInput, TextInputProps, TouchableOpacity, View } from "react-native";
-import { ActivityIndicator } from "react-native-paper";
-import AppText from "./appText.component";
 
 export interface InputComponentProps extends TextInputProps {
   errorText?: string[];
@@ -101,7 +101,6 @@ const textInputStyles = StyleSheet.create({
     borderRadius: 12,
     color: Colors.mainBlack,
     borderColor: Colors.mainBlack,
-
   },
   suffixWrapper: {
     position: "absolute",

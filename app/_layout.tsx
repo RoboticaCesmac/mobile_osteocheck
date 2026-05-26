@@ -19,7 +19,8 @@ export default function RootLayout() {
   return (
     <AppContextProvider>
       {isAppInitialLoading && <SplashLoading />}
-      <Stack initialRouteName="(auth)" screenOptions={{ headerShown: false }}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(main)" options={{ headerShown: false }} />
         <Stack.Screen name="patient/[id]" options={{ headerShown: false }} />
         <Stack.Screen name="questionnaire/[patientId]" options={{ headerShown: false }} />

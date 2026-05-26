@@ -105,7 +105,7 @@ export default function HomeScreen() {
           <View
             style={{
               flexDirection: "row",
-              justifyContent: "space-between",
+              justifyContent: "center",
               gap: 10,
               alignItems: "center",
             }}
@@ -139,10 +139,8 @@ export default function HomeScreen() {
         <View style={{ marginTop: 20 }}>
           <View
             style={{
-              flexDirection: "row",
               gap: 10,
               alignItems: "center",
-              justifyContent: "space-between",
             }}
           >
             <TouchableOpacity
@@ -158,7 +156,7 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
         </View>
-        
+
         <AppText
           content="Pode te interessar"
           textProps={{ style: { marginBlock: 20 } }}
