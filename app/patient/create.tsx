@@ -1,20 +1,20 @@
-import React, { useState, useContext, useCallback } from "react";
-import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
-import { useRouter, useFocusEffect } from "expo-router";
 import AppText from "@/components/appText.component";
-import InputComponent from "@/components/input.component";
 import ButtonComponent from "@/components/button.component";
-import DropdownComponent from "@/components/dropdown.component";
-import DateSelectionComponent from "@/components/dateSelection.component";
 import Container from "@/components/container.component";
+import DateSelectionComponent from "@/components/dateSelection.component";
+import DropdownComponent from "@/components/dropdown.component";
+import InputComponent from "@/components/input.component";
+import { NotificationType } from "@/components/notification.component";
 import colors from "@/constants/colors";
 import textSize from "@/constants/textSize";
 import { AppContext } from "@/context/appContext";
-import { NotificationType } from "@/components/notification.component";
-import PatientAPI from "@/services/patient";
-import AuthAPI from "@/services/auth";
 import { PatientsGender } from "@/domain/patient";
+import AuthAPI from "@/services/auth";
+import PatientAPI from "@/services/patient";
 import { AntDesign } from "@expo/vector-icons";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useContext, useState } from "react";
+import { StyleSheet, View } from "react-native";
 
 export default function CreatePatientScreen() {
     const [initials, setInitials] = useState("");
@@ -114,6 +114,7 @@ export default function CreatePatientScreen() {
                         textProps={{ style: styles.label }}
                     />
                     <InputComponent
+                        placeholderTextColor={"#bbb"}
                         placeholder=" Nome"
                         value={initials}
                         onChangeText={setInitials}

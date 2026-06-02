@@ -1,17 +1,17 @@
+import osteocheckLogo from "@/assets/images/osteocheck-logo.png";
 import AppText from "@/components/appText.component";
 import ButtonComponent from "@/components/button.component";
 import Container from "@/components/container.component";
 import InputComponent from "@/components/input.component";
+import { NotificationType } from "@/components/notification.component";
 import colors from "@/constants/colors";
 import { defaultFormStyle } from "@/constants/formStyle";
 import textSize from "@/constants/textSize";
-import { StyleSheet, View, Image } from "react-native";
-import osteocheckLogo from "@/assets/images/osteocheck-logo.png";
-import { useRouter } from "expo-router";
-import professional from "@/services/professional";
-import { useContext, useState } from "react";
 import { AppContext } from "@/context/appContext";
-import { NotificationType } from "@/components/notification.component";
+import professional from "@/services/professional";
+import { useRouter } from "expo-router";
+import { useContext, useState } from "react";
+import { Image, StyleSheet, View } from "react-native";
 
 export default function ForgotPasswordEmailInputScreen() {
   const [email, setEmail] = useState<string>();
@@ -96,7 +96,8 @@ export default function ForgotPasswordEmailInputScreen() {
               }}
             />
             <InputComponent
-              style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
+              placeholderTextColor={"#bbb"}
+              style={{color: "rgb(0, 0, 0)", backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="exemplo@hotmail.com"
               errorText={emailInputError}
               onChangeText={setEmail}

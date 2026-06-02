@@ -1,16 +1,16 @@
+import osteocheckBlueBgLogo from "@/assets/images/osteocheck-blue-bg-logo.png";
+import AppText from "@/components/appText.component";
+import colors from "@/constants/colors";
+import textSize from "@/constants/textSize";
+import { clearAllStoredData } from "@/utils/asyncStorage";
+import { AntDesign } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { createContext, PropsWithChildren, useState } from "react";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import AnimatedNotification, {
   NotificationType,
 } from "../components/notification.component";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
-import colors from "@/constants/colors";
-import AppText from "@/components/appText.component";
-import { AntDesign } from "@expo/vector-icons";
-import textSize from "@/constants/textSize";
-import osteocheckBlueBgLogo from "@/assets/images/osteocheck-blue-bg-logo.png";
-import { useRouter } from "expo-router";
 import UserContextProvider from "./userContext";
-import { clearAllStoredData } from "@/utils/asyncStorage";
 
 type AppNotification = {
   type: NotificationType;
@@ -99,31 +99,33 @@ export default function AppContextProvider({ children }: PropsWithChildren) {
       />
 
       {showHeader && screenName !== ScreenName.Home ? (
-        <View style={appContextStyle.headerComponent}>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
+        <View style={{backgroundColor: 'rgb(255, 255, 255)'}}>
+          <View style={appContextStyle.headerComponent}>
             <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 20 }}
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              <TouchableOpacity onPress={() => router.back()}>
-                <AntDesign name="left" color={colors.mainWhite} size={16} />
-              </TouchableOpacity>
-              <AppText
-                content={screenName}
-                textProps={{
-                  style: { color: colors.mainWhite, fontSize: textSize.small },
+              <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 20 }}
+              >
+                <TouchableOpacity onPress={() => router.back()}>
+                  <AntDesign name="left" color={colors.mainWhite} size={16} />
+                </TouchableOpacity>
+                <AppText
+                  content={screenName}
+                  textProps={{
+                    style: { color: colors.mainWhite, fontSize: textSize.small },
+                  }}
+                />
+              </View>
+
+              <Image
+                source={osteocheckBlueBgLogo}
+                style={{
+                  width: 90,
+                  height: 30,
                 }}
               />
             </View>
-
-            <Image
-              source={osteocheckBlueBgLogo}
-              style={{
-                width: 90,
-                height: 30,
-              }}
-            />
           </View>
         </View>
       ) : null}

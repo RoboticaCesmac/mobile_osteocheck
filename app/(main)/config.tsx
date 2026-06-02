@@ -58,6 +58,7 @@ export default function ConfigScreen() {
                 />
                 <View style={styles.sectionContainer}>
 
+    
                     <TouchableOpacity style={styles.listItem} onPress={onHandleChangePassword}>
                         <View style={styles.listItemLeft}>
                             <Feather name="key" size={20} color={colors.mainBlack} />
@@ -72,6 +73,7 @@ export default function ConfigScreen() {
                     textProps={{ style: [styles.sectionTitle, { marginTop: 30 }] }}
                 />
                 <View style={styles.sectionContainer}>
+    
                     <View style={styles.listItem}>
                         <View style={styles.listItemLeft}>
                             <Feather name="tag" size={20} color={colors.mainBlack} />

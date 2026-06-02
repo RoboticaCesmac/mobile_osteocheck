@@ -1,19 +1,19 @@
-import Container from "@/components/container.component";
-import { Image, StyleSheet, View } from "react-native";
 import osteocheckLogo from "@/assets/images/osteocheck-logo.png";
+import AppText from "@/components/appText.component";
+import BadgeComponent from "@/components/badge.component";
+import ButtonComponent from "@/components/button.component";
+import Container from "@/components/container.component";
+import InputComponent from "@/components/input.component";
+import { NotificationType } from "@/components/notification.component";
 import colors from "@/constants/colors";
 import { defaultFormStyle } from "@/constants/formStyle";
-import AppText from "@/components/appText.component";
 import textSize from "@/constants/textSize";
-import InputComponent from "@/components/input.component";
-import ButtonComponent from "@/components/button.component";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import BadgeComponent from "@/components/badge.component";
-import { useState, useContext } from "react";
+import { AppContext } from "@/context/appContext";
 import professionalApi from "@/services/professional";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { AppContext } from "@/context/appContext";
-import { NotificationType } from "@/components/notification.component";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useContext, useState } from "react";
+import { Image, StyleSheet, View } from "react-native";
 
 export default function PasswordChangeNewPasswordScreen() {
   const router = useRouter();
@@ -115,7 +115,8 @@ export default function PasswordChangeNewPasswordScreen() {
               }}
             />
             <InputComponent
-              style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
+              placeholderTextColor={"#bbb"}
+              style={{color: "rgb(0, 0, 0)", backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Senha"
               isPassword
               value={password}
@@ -130,7 +131,8 @@ export default function PasswordChangeNewPasswordScreen() {
               }}
             />
             <InputComponent
-              style={{ backgroundColor: colors.mainWhite, borderRadius: 10 }}
+              placeholderTextColor={"#bbb"}
+              style={{color: "rgb(0, 0, 0)", backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Confirmar senha"
               isPassword
               value={confirmPassword}

@@ -99,7 +99,7 @@ export default function PatientDetailsScreen() {
         } catch (error: any) {
             appContext.handleSetNotification(
                 NotificationType.Error,
-                error.message || "Erro ao gerar PDF"
+                "Erro ao gerar PDF. Verifique se o questionário foi finalizado"
             );
         } finally {
             setPdfLoading(null);

@@ -98,7 +98,8 @@ export default function RegisterScreen() {
               }}
             />
             <InputComponent
-              style={{ backgroundColor: colors.mainWhite, borderRadius: 10 , color: "#000"}}
+              placeholderTextColor={"#bbb"}
+              style={{ color: "rgb(0, 0, 0)", backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Nome completo"
               value={name}
               onChangeText={setName}
@@ -113,7 +114,8 @@ export default function RegisterScreen() {
               }}
             />
             <InputComponent
-              style={{ backgroundColor: colors.mainWhite, borderRadius: 10 , color: "#000"}}
+              placeholderTextColor={"#bbb"}
+              style={{ color: "rgb(0, 0, 0)", backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="exemplo@hotmail.com"
               value={email}
               onChangeText={setEmail}
@@ -128,7 +130,8 @@ export default function RegisterScreen() {
               }}
             />
             <InputComponent
-              style={{ backgroundColor: colors.mainWhite, borderRadius: 10 , color: "#000"}}
+              placeholderTextColor={"#bbb"}
+              style={{ color: "rgb(0, 0, 0)", backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Senha"
               isPassword
               value={password}
@@ -144,7 +147,8 @@ export default function RegisterScreen() {
               }}
             />
             <InputComponent
-              style={{ backgroundColor: colors.mainWhite, borderRadius: 10 , color: "#000"}}
+              placeholderTextColor={"#bbb"}
+              style={{color: "rgb(0, 0, 0)", backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Confirmação de senha"
               isPassword
               value={confirmPassword}

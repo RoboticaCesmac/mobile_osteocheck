@@ -14,7 +14,7 @@ export class Api {
   constructor() {
     this.http = axios.create({
       timeout: 30000,
-      baseURL: 'https://api-osteocheck.citeccesmac.com.br/api/',
+      baseURL: 'https://api-osteocheck.citeccesmac.com.br/api',
       responseType: 'json',
       headers: {
         'Content-Type': 'application/json',

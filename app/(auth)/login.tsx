@@ -52,7 +52,8 @@ export default function LoginScreen() {
         email: email!,
         password: password!,
       });
-      storeData("userJWT", auth.data.jwt);
+
+      await storeData("userJWT", auth.data.jwt);
       appContext.handleSetNotification(NotificationType.Success, "Login realizado com sucesso");
       await verifyProfile();
     } catch (error: any) {
@@ -98,7 +99,8 @@ export default function LoginScreen() {
               }}
             />
             <InputComponent
-              style={{ backgroundColor: colors.mainWhite, borderRadius: 10, color: "#000" }}
+              placeholderTextColor={"#bbb"}
+              style={{ color: "rgb(0, 0, 0)", backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="exemplo@hotmail.com"
               value={email}
               onChangeText={setEmail}
@@ -113,7 +115,8 @@ export default function LoginScreen() {
               }}
             />
             <InputComponent
-              style={{ backgroundColor: colors.mainWhite, borderRadius: 10, color: "#000" }}
+              placeholderTextColor={"#bbb"}
+              style={{ color: "rgb(0, 0, 0)", backgroundColor: colors.mainWhite, borderRadius: 10 }}
               placeholder="Senha"
               isPassword
               value={password}
